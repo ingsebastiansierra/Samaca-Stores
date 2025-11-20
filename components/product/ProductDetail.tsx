@@ -116,6 +116,7 @@ export function ProductDetail({ product, store }: ProductDetailProps) {
                 src={product.images[selectedImage] || '/placeholder.jpg'}
                 alt={product.name}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
               />
@@ -149,6 +150,7 @@ export function ProductDetail({ product, store }: ProductDetailProps) {
                       src={image}
                       alt={`${product.name} ${index + 1}`}
                       fill
+                      sizes="(max-width: 768px) 25vw, 12vw"
                       className="object-cover"
                     />
                   </button>

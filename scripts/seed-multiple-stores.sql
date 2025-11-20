@@ -7,7 +7,7 @@
 -- TIENDA 1: BOUTIQUE ELEGANCIA (Alta gama)
 -- ============================================
 
-INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, status)
+INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, banner_url, logo_url, status)
 VALUES (
   'Boutique Elegancia',
   'boutique-elegancia',
@@ -18,6 +18,8 @@ VALUES (
   '573201234567',
   'Samacá',
   'Calle 5 #12-34, Centro',
+  'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800',
+  'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=200',
   'active'
 );
 
@@ -54,7 +56,7 @@ INSERT INTO products (store_id, category_id, name, slug, description, price, sto
 -- TIENDA 2: MODA URBANA (Jóvenes, casual)
 -- ============================================
 
-INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, status)
+INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, banner_url, logo_url, status)
 VALUES (
   'Moda Urbana',
   'moda-urbana',
@@ -65,6 +67,8 @@ VALUES (
   '573109876543',
   'Samacá',
   'Carrera 8 #15-20',
+  'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800',
+  'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200',
   'active'
 );
 
@@ -106,7 +110,7 @@ INSERT INTO products (store_id, category_id, name, slug, description, price, sto
 -- TIENDA 3: ROPA ECONÓMICA (Precios bajos)
 -- ============================================
 
-INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, status)
+INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, banner_url, logo_url, status)
 VALUES (
   'Todo a Buen Precio',
   'todo-buen-precio',
@@ -117,6 +121,8 @@ VALUES (
   '573157654321',
   'Samacá',
   'Calle 10 #8-15',
+  'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800',
+  'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=200',
   'active'
 );
 
@@ -158,7 +164,7 @@ INSERT INTO products (store_id, category_id, name, slug, description, price, sto
 -- TIENDA 4: DEPORTES EXTREMOS (Ropa deportiva)
 -- ============================================
 
-INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, status)
+INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, banner_url, logo_url, status)
 VALUES (
   'Sport Zone',
   'sport-zone',
@@ -169,6 +175,8 @@ VALUES (
   '573186543210',
   'Samacá',
   'Avenida Principal #20-30',
+  'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800',
+  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=200',
   'active'
 );
 
@@ -210,7 +218,7 @@ INSERT INTO products (store_id, category_id, name, slug, description, price, sto
 -- TIENDA 5: MODA INFANTIL (Niños)
 -- ============================================
 
-INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, status)
+INSERT INTO stores (name, slug, description, owner_name, owner_email, owner_phone, whatsapp, city, address, banner_url, logo_url, status)
 VALUES (
   'Pequeños Fashionistas',
   'pequenos-fashionistas',
@@ -221,6 +229,8 @@ VALUES (
   '573145678901',
   'Samacá',
   'Calle 7 #10-25',
+  'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?w=800',
+  'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200',
   'active'
 );
 

@@ -1,94 +1,102 @@
-'use client'
-
-import { Card } from '@/components/ui/Card'
-import { ShoppingBag, Package, TrendingUp, Users } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { DashboardStats } from '@/components/admin/DashboardStats'
+import { RecentOrders } from '@/components/admin/RecentOrders'
+import { LowStockProducts } from '@/components/admin/LowStockProducts'
+import { Store } from 'lucide-react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
 
-export default function AdminDashboardPage() {
-  const stats = [
-    { label: 'Pedidos Hoy', value: '12', icon: ShoppingBag, color: 'text-blue-500' },
-    { label: 'Productos', value: '156', icon: Package, color: 'text-green-500' },
-    { label: 'Ventas del Mes', value: '$2.4M', icon: TrendingUp, color: 'text-purple-500' },
-    { label: 'Clientes', value: '89', icon: Users, color: 'text-orange-500' }
-  ]
+export default async function DashboardPage() {
+  const supabase = await createClient()
+  
+  // Verificar autenticación
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  
+  if (userError || !user) {
+    console.error('Error de autenticación:', userError)
+    redirect('/auth/login')
+  }
 
-  const quickLinks = [
-    { href: '/admin/productos', label: 'Gestionar Productos', color: 'bg-blue-500' },
-    { href: '/admin/pedidos', label: 'Ver Pedidos', color: 'bg-green-500' },
-    { href: '/admin/inventario', label: 'Inventario', color: 'bg-purple-500' }
-  ]
+  // Obtener tienda del usuario
+  const { data: store, error: storeError } = await supabase
+    .from('stores')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (!store) {
+    // El usuario no tiene tienda asignada
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-xl border-2 border-gray-200 p-8 text-center">
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Store className="w-8 h-8 text-orange-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-black mb-2">
+            No tienes una tienda asignada
+          </h1>
+          <p className="text-gray-600 mb-6">
+            Tu cuenta está activa pero aún no tienes una tienda vinculada. 
+            Contacta al administrador o crea una nueva tienda.
+          </p>
+          <div className="space-y-3">
+            <Link
+              href="/auth/register"
+              className="block px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Crear Nueva Tienda
+            </Link>
+            <button
+              onClick={() => window.location.href = '/'}
+              className="block w-full px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-colors"
+            >
+              Volver al Inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Obtener estadísticas
+  const { data: products } = await supabase
+    .from('products')
+    .select('id, stock, price')
+    .eq('store_id', store.id)
+
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('id, total, status, created_at')
+    .eq('store_id', store.id)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  const totalProducts = products?.length || 0
+  const totalOrders = orders?.length || 0
+  const totalRevenue = orders?.reduce((sum, order) => sum + Number(order.total), 0) || 0
+  const lowStockCount = products?.filter(p => p.stock <= 5).length || 0
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Bienvenido al panel administrativo
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-black">Dashboard</h1>
+        <p className="text-gray-600 mt-1">Bienvenido a {store.name}</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon
-          return (
-            <Card key={index} className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    {stat.label}
-                  </p>
-                  <p className="text-3xl font-bold">{stat.value}</p>
-                </div>
-                <div className={`p-3 rounded-full bg-gray-100 dark:bg-gray-800 ${stat.color}`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-              </div>
-            </Card>
-          )
-        })}
+      {/* Stats */}
+      <DashboardStats
+        totalProducts={totalProducts}
+        totalOrders={totalOrders}
+        totalRevenue={totalRevenue}
+        lowStockCount={lowStockCount}
+      />
+
+      {/* Content Grid */}
+      <div className="grid lg:grid-cols-2 gap-8">
+        <RecentOrders orders={orders || []} />
+        <LowStockProducts storeId={store.id} />
       </div>
-
-      {/* Quick Links */}
-      <Card className="p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Accesos Rápidos</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          {quickLinks.map((link, index) => (
-            <Link key={index} href={link.href}>
-              <Button
-                variant="outline"
-                className={`w-full h-20 text-lg ${link.color} text-white hover:opacity-90`}
-              >
-                {link.label}
-              </Button>
-            </Link>
-          ))}
-        </div>
-      </Card>
-
-      {/* Recent Orders */}
-      <Card className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Pedidos Recientes</h2>
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
-              <div>
-                <p className="font-semibold">SAMACA-RP-20251116-{1000 + i}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Cliente {i} - Hace {i} hora(s)
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-primary-600">$120.000</p>
-                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                  Pendiente
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   )
 }

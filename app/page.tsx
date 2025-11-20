@@ -5,6 +5,9 @@ import { CategoryShowcase } from '@/components/home/CategoryShowcase'
 import { TrendingProducts } from '@/components/home/TrendingProducts'
 import { Newsletter } from '@/components/home/Newsletter'
 
+// Revalidar cada 5 minutos
+export const revalidate = 300
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">

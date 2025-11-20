@@ -5,6 +5,7 @@ import { ShoppingCart, Menu, X, Store } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCartStore } from '@/lib/store/cart-store'
+import { UserMenu } from './auth/UserMenu'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -69,6 +70,11 @@ export function Navbar() {
                 )}
               </motion.button>
             </Link>
+
+            {/* User Menu */}
+            <div className="hidden md:block">
+              <UserMenu />
+            </div>
 
             {/* Mobile Menu Button */}
             <button
