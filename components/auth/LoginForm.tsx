@@ -21,9 +21,27 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      await signIn({ email, password })
-      toast.success('¡Bienvenido!')
-      router.push('/')
+      const { user } = await signIn({ email, password })
+
+      // Check if user has a store (is admin)
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: store } = await supabase
+        .from('stores')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (store) {
+        // User is admin, redirect to dashboard
+        toast.success('¡Bienvenido al panel de administración!')
+        router.push('/admin/dashboard')
+      } else {
+        // Regular user, redirect to homepage
+        toast.success('¡Bienvenido!')
+        router.push('/')
+      }
+
       router.refresh()
     } catch (error: any) {
       toast.error(error.message || 'Error al iniciar sesión')
@@ -51,7 +69,7 @@ export function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="tu@email.com"
             />
           </div>
@@ -69,7 +87,7 @@ export function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full pl-10 pr-12 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-12 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="••••••••"
             />
             <button

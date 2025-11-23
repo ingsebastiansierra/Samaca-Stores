@@ -1,70 +1,57 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { getCachedTrendingProducts } from '@/lib/supabase/cache'
-import { TrendingUp } from 'lucide-react'
+import { TrendingUp, ArrowRight } from 'lucide-react'
+import { ProductCard } from '@/components/ProductCard'
 
 export async function TrendingProducts() {
   const data = await getCachedTrendingProducts()
 
   if (!data || data.length === 0) return null
-  
+
   const products = data.map(item => ({
     ...item,
     store: Array.isArray(item.stores) ? item.stores[0] : item.stores
   }))
 
   return (
-    <section className="py-20 px-4 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-24 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-neon-blue/5 to-transparent pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-12">
-          <div className="p-3 bg-black rounded-full">
-            <TrendingUp className="w-6 h-6 text-white" />
-          </div>
+        <div className="flex items-end justify-between mb-12">
           <div>
-            <h2 className="text-4xl font-bold text-black">
-              Tendencias
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-neon-blue/10 rounded-lg border border-neon-blue/30">
+                <TrendingUp className="w-6 h-6 text-neon-blue" />
+              </div>
+              <span className="text-neon-blue font-mono text-sm tracking-wider">TRENDING NOW</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+              Tendencias <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple">Virales</span>
             </h2>
-            <p className="text-gray-600">
-              Lo más popular del momento
-            </p>
           </div>
+
+          <Link href="/catalogo" className="hidden md:flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+            Ver todo
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        {/* Products */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <Link key={product.id} href={`/tienda/${product.store.slug}/producto/${product.slug}`}>
-              <div className="group bg-white rounded-2xl overflow-hidden hover:shadow-2xl transition-shadow">
-                <div className="relative aspect-square overflow-hidden">
-                  <Image
-                    src={product.images[0] || '/placeholder.jpg'}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-black text-white text-xs font-bold rounded-full">
-                      TRENDING
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <p className="text-xs text-gray-500 mb-2">
-                    {product.store.name}
-                  </p>
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-2xl font-bold text-black">
-                    ${product.price.toLocaleString('es-CO')}
-                  </p>
-                </div>
-              </div>
-            </Link>
+            <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+
+        <div className="mt-12 text-center md:hidden">
+          <Link href="/catalogo" className="inline-flex items-center gap-2 text-neon-blue hover:text-white transition-colors font-medium">
+            Ver todo el catálogo
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>

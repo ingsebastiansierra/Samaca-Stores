@@ -1,223 +1,146 @@
-# 🛍️ Samacá Store - Sistema de E-commerce Ultra Rápido
+# Samacá Store
 
-Sistema web profesional para negocios de ropa, zapatos y accesorios en Samacá, Boyacá. Construido con Next.js 14 y Supabase.
+Plataforma de comercio electrónico moderna para tiendas locales en Samacá, Boyacá.
 
-## 🚀 Características Principales
+## 🚀 Características
 
-- ⚡ **Ultra Rápido**: Next.js 14 con App Router y Server Components
-- 🎨 **UI Moderna**: Diseño elegante con Tailwind CSS y Framer Motion
-- 📱 **WhatsApp Integration**: Integración directa con WhatsApp Business
-- 🎫 **Sistema de Tickets**: Generación automática de tickets únicos por pedido
-- 📦 **Inventario en Tiempo Real**: Actualización automática con Supabase Realtime
-- 🎁 **Promociones Dinámicas**: Sistema innovador de promociones (Dado de la Suerte, Happy Hour, etc.)
-- 🌙 **Modo Oscuro**: Soporte completo para tema claro y oscuro
-- 📊 **Dashboard Admin**: Panel administrativo completo
+- **Multi-tienda**: Soporte para múltiples tiendas en una sola plataforma
+- **Catálogo de productos**: Navegación y búsqueda de productos
+- **Sistema de cotizaciones**: Los clientes pueden solicitar cotizaciones vía WhatsApp
+- **Panel de administración**: Gestión completa de productos, categorías y pedidos
+- **Autenticación**: Sistema de login para clientes y administradores
+- **Tema claro**: Interfaz moderna con diseño limpio y profesional
+- **Responsive**: Optimizado para dispositivos móviles y desktop
 
 ## 🛠️ Tecnologías
 
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **State Management**: Zustand
-- **Backend**: Supabase (Auth, PostgreSQL, Storage, Realtime)
-- **Icons**: Lucide React
-- **Notifications**: React Hot Toast
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Animaciones**: Framer Motion
+- **Iconos**: Lucide React
+- **Notificaciones**: React Hot Toast
 
-## 📋 Requisitos Previos
+## 📦 Instalación
 
-- Node.js 18+ 
-- npm o yarn
-- Cuenta de Supabase
-
-## 🔧 Instalación
-
-1. **Clonar el repositorio**
+1. Clona el repositorio
 ```bash
-git clone <repository-url>
+git clone [url-del-repo]
 cd samaca-store
 ```
 
-2. **Instalar dependencias**
+2. Instala las dependencias
 ```bash
 npm install
 ```
 
-3. **Configurar variables de entorno**
-
-Edita el archivo `.env.local` con tus credenciales:
-
+3. Configura las variables de entorno
+Crea un archivo `.env.local` con:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
-SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
-NEXT_PUBLIC_WHATSAPP_NUMBER=573001234567
-NEXT_PUBLIC_BUSINESS_NAME=Samacá Store
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=tu_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_supabase_anon_key
 ```
 
-4. **Configurar Supabase**
-
-Ejecuta el script SQL en tu proyecto de Supabase:
-```bash
-# Copia el contenido de supabase/schema.sql
-# y ejecútalo en el SQL Editor de Supabase
-```
-
-5. **Ejecutar en desarrollo**
+4. Ejecuta el servidor de desarrollo
 ```bash
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+5. Abre [http://localhost:3000](http://localhost:3000)
 
 ## 📁 Estructura del Proyecto
 
 ```
 samaca-store/
-├── app/                      # App Router de Next.js
-│   ├── admin/               # Panel administrativo
-│   ├── carrito/             # Carrito de compras
-│   ├── catalogo/            # Catálogo de productos
-│   ├── checkout/            # Proceso de pago
-│   ├── pedido/              # Estado de pedidos
-│   ├── promociones/         # Página de promociones
-│   └── page.tsx             # Página de inicio
-├── components/              # Componentes reutilizables
-│   ├── ui/                  # Componentes UI base
-│   ├── Navbar.tsx
-│   ├── Footer.tsx
-│   ├── ProductCard.tsx
-│   └── WhatsAppButton.tsx
-├── lib/                     # Utilidades y configuración
-│   ├── supabase/           # Cliente de Supabase
-│   ├── store/              # Estado global (Zustand)
-│   ├── types/              # Tipos TypeScript
-│   └── utils/              # Funciones auxiliares
-└── supabase/               # Configuración de base de datos
-    └── schema.sql          # Schema de PostgreSQL
+├── app/                    # Páginas y rutas de Next.js
+│   ├── admin/             # Panel de administración
+│   ├── auth/              # Autenticación
+│   ├── carrito/           # Carrito de compras
+│   ├── catalogo/          # Catálogo de productos
+│   └── producto/          # Detalles de producto
+├── components/            # Componentes reutilizables
+│   ├── admin/            # Componentes del admin
+│   ├── auth/             # Componentes de autenticación
+│   ├── cart/             # Componentes del carrito
+│   └── ui/               # Componentes UI base
+├── lib/                  # Utilidades y configuración
+│   ├── hooks/           # Custom hooks
+│   ├── store/           # Estado global (Zustand)
+│   └── supabase/        # Cliente de Supabase
+└── scripts/             # Scripts SQL para la base de datos
 ```
 
-## 🎯 Funcionalidades Principales
+## 🗄️ Base de Datos
 
-### 1. Catálogo Inteligente
-- Listado de productos con fotos optimizadas
-- Filtros avanzados (talla, color, precio, categoría)
-- Búsqueda rápida con autosugest
-- Actualización en tiempo real
+### Scripts Disponibles
 
-### 2. Sistema de Tickets
-Formato: `SAMACA-RP-[AAAA][MM][DD]-[4DIGITOS]`
-- Ejemplo: `SAMACA-RP-20251116-4821`
-- Seguimiento de pedidos
-- Generación de QR (opcional)
+- `create-storage-bucket.sql`: Crea el bucket de almacenamiento para imágenes
+- `setup-supabase-storage.sql`: Configura las políticas de storage
+- `seed-multiple-stores.sql`: Datos de ejemplo para múltiples tiendas
+- `update-product-images.sql`: Actualiza las URLs de imágenes de productos
+- `update-custom-products.sql`: Actualiza productos específicos
 
-### 3. Integración WhatsApp
-- Botón flotante global
-- Consultas por producto
-- Envío automático de pedidos
-- Mensajes pre-formateados
+### Ejecutar Scripts
 
-### 4. Promociones Innovadoras
-- 🎲 **Dado de la Suerte**: Descuento aleatorio 5%-25%
-- ⏰ **Happy Hour**: Descuentos por horario
-- 🎁 **Combo Outfit**: Descuento por compra múltiple
-- ⏳ **Últimas Unidades**: Productos con stock bajo
-- ⭐ **Recomendado**: Producto destacado semanal
+1. Ve a tu proyecto en Supabase
+2. Abre el SQL Editor
+3. Copia y pega el contenido del script
+4. Ejecuta el script
 
-### 5. Dashboard Administrativo
-- Gestión de productos (CRUD)
-- Control de inventario
-- Gestión de pedidos
-- Reportes de ventas
-- Configuración del negocio
+## 🔐 Roles de Usuario
 
-## 🔐 Autenticación
+### Cliente
+- Navegar catálogo
+- Agregar productos al carrito
+- Solicitar cotizaciones vía WhatsApp
+- Ver historial de cotizaciones
 
-El sistema usa Supabase Auth para el panel administrativo:
+### Administrador
+- Gestionar productos
+- Gestionar categorías
+- Ver estadísticas
+- Configurar tienda
 
-```typescript
-// Ejemplo de login
-const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'admin@samacastore.com',
-  password: 'tu_contraseña'
-})
-```
+## 🎨 Tema y Diseño
 
-## 📱 Páginas Principales
+La aplicación utiliza un tema claro con:
+- Fondo blanco principal
+- Acentos en azul cielo (sky-600)
+- Tipografía Inter y Orbitron
+- Animaciones suaves con Framer Motion
 
-- `/` - Inicio
-- `/catalogo` - Catálogo de productos
-- `/promociones` - Promociones especiales
-- `/carrito` - Carrito de compras
-- `/checkout` - Finalizar pedido
-- `/pedido/[ticket]` - Estado del pedido
-- `/admin/login` - Login administrativo
-- `/admin/dashboard` - Panel de control
-- `/admin/productos` - Gestión de productos
-- `/admin/inventario` - Control de inventario
-- `/admin/pedidos` - Gestión de pedidos
+## 📱 Características Principales
 
-## 🎨 Personalización
+### Para Clientes
+- **Catálogo**: Búsqueda y filtrado de productos
+- **Carrito**: Gestión de productos agrupados por tienda
+- **Cotizaciones**: Solicitud directa por WhatsApp
+- **Perfil**: Historial de cotizaciones
 
-### Colores
-Edita `tailwind.config.ts` para cambiar los colores primarios:
-
-```typescript
-colors: {
-  primary: {
-    50: '#f0f9ff',
-    // ... más tonos
-    900: '#0c4a6e',
-  },
-}
-```
-
-### WhatsApp
-Configura tu número en `.env.local`:
-```env
-NEXT_PUBLIC_WHATSAPP_NUMBER=573001234567
-```
+### Para Administradores
+- **Dashboard**: Estadísticas de ventas y productos
+- **Productos**: CRUD completo de productos
+- **Categorías**: Gestión de categorías
+- **Configuración**: Ajustes de la tienda
 
 ## 🚀 Despliegue
 
 ### Vercel (Recomendado)
 
-1. Push tu código a GitHub
-2. Importa el proyecto en Vercel
-3. Configura las variables de entorno
-4. Deploy automático
+1. Conecta tu repositorio a Vercel
+2. Configura las variables de entorno
+3. Despliega automáticamente
 
-### Otras plataformas
+### Otros Servicios
+
+La aplicación es compatible con cualquier servicio que soporte Next.js:
 - Netlify
 - Railway
 - AWS Amplify
 
-## 📊 Base de Datos
-
-El sistema usa PostgreSQL a través de Supabase con las siguientes tablas:
-
-- `products` - Productos del catálogo
-- `orders` - Pedidos de clientes
-- `promotions` - Promociones activas
-- `inventory_logs` - Historial de inventario
-
-## 🤝 Contribuir
-
-Este sistema está diseñado para ser vendido a comercios locales. Puedes:
-
-1. Personalizar el diseño
-2. Agregar nuevas funcionalidades
-3. Adaptar para otros tipos de negocio
-4. Mejorar el sistema de promociones
-
 ## 📄 Licencia
 
-Proyecto privado para uso comercial.
+Este proyecto es privado y confidencial.
 
-## 📞 Soporte
+## 👥 Contacto
 
-Para soporte técnico o consultas sobre implementación, contacta al desarrollador.
-
----
-
-**Desarrollado con ❤️ para comercios en Samacá, Boyacá**
+Para soporte o consultas, contacta al equipo de desarrollo.

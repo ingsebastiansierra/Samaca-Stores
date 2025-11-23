@@ -54,15 +54,17 @@ export function UserMenu() {
   if (!user) {
     return (
       <div className="flex items-center gap-2">
-        <Link href="/auth/login">
-          <button className="px-4 py-2 text-black hover:text-gray-600 font-medium transition-colors">
-            Iniciar Sesión
-          </button>
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+        >
+          Iniciar Sesión
         </Link>
-        <Link href="/auth/register">
-          <button className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors">
-            Registrarse
-          </button>
+        <Link
+          href="/auth/register"
+          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+        >
+          Registrarse
         </Link>
       </div>
     )
@@ -100,46 +102,41 @@ export function UserMenu() {
                 <p className="text-sm text-gray-600">{user.email}</p>
               </div>
 
-              {/* Menu Items */}
               <div className="py-2">
-                <Link href="/perfil">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
-                  >
-                    <User className="w-5 h-5" />
-                    <span>Mi Perfil</span>
-                  </button>
+                <Link
+                  href="/perfil"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
+                >
+                  <User className="w-5 h-5" />
+                  <span>Mi Perfil</span>
                 </Link>
 
-                <Link href="/mis-pedidos">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span>Mis Pedidos</span>
-                  </button>
+                <Link
+                  href="/mis-pedidos"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  <span>Mis Pedidos</span>
                 </Link>
 
-                <Link href="/admin/dashboard">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
-                  >
-                    <Store className="w-5 h-5" />
-                    <span>Panel Admin</span>
-                  </button>
+                <Link
+                  href="/admin/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
+                >
+                  <Store className="w-5 h-5" />
+                  <span>Panel Admin</span>
                 </Link>
 
-                <Link href="/configuracion">
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
-                  >
-                    <Settings className="w-5 h-5" />
-                    <span>Configuración</span>
-                  </button>
+                <Link
+                  href="/configuracion"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
+                >
+                  <Settings className="w-5 h-5" />
+                  <span>Configuración</span>
                 </Link>
               </div>
 

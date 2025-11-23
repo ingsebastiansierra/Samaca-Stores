@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { ProductCard } from './ProductCard'
+import { ProductCard } from '@/components/ProductCard'
 import { Loader2 } from 'lucide-react'
 
 interface ProductsGridProps {
@@ -98,7 +98,7 @@ export function ProductsGrid({ searchQuery = '', category = 'todos', filters = {
     return (
       <div className="text-center py-20">
         <p className="text-gray-500 text-lg">
-          {searchQuery 
+          {searchQuery
             ? `No se encontraron productos para "${searchQuery}"`
             : 'No hay productos disponibles'
           }

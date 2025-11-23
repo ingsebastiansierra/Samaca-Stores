@@ -1,6 +1,9 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+// This file now re-exports useCart with a compatible API
+// to maintain backward compatibility with existing code
 
+import { useCart, type CartItem as UseCartItem } from '@/lib/hooks/useCart'
+
+// Export the CartItem type for compatibility
 export interface CartItem {
   id: string
   productId: string
@@ -12,72 +15,47 @@ export interface CartItem {
   quantity: number
 }
 
-interface CartStore {
-  items: CartItem[]
-  addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void
-  removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
-  clearCart: () => void
-  getTotalItems: () => number
-  getTotalPrice: () => number
-}
+// Create a wrapper hook that adapts useCart to the old API
+export const useCartStore = () => {
+  const cart = useCart()
 
-export const useCartStore = create<CartStore>()(
-  persist(
-    (set, get) => ({
-      items: [],
-      
-      addItem: (item) => {
-        const items = get().items
-        const existingItem = items.find(i => 
-          i.productId === item.productId && 
-          i.size === item.size && 
-          i.color === item.color
-        )
-        
-        if (existingItem) {
-          set({
-            items: items.map(i =>
-              i.id === existingItem.id
-                ? { ...i, quantity: i.quantity + (item.quantity || 1) }
-                : i
-            )
-          })
-        } else {
-          set({
-            items: [...items, { ...item, quantity: item.quantity || 1 }]
-          })
-        }
-      },
-      
-      removeItem: (id) => {
-        set({ items: get().items.filter(i => i.id !== id) })
-      },
-      
-      updateQuantity: (id, quantity) => {
-        if (quantity <= 0) {
-          get().removeItem(id)
-        } else {
-          set({
-            items: get().items.map(i =>
-              i.id === id ? { ...i, quantity } : i
-            )
-          })
-        }
-      },
-      
-      clearCart: () => set({ items: [] }),
-      
-      getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.quantity, 0)
-      },
-      
-      getTotalPrice: () => {
-        return get().items.reduce((total, item) => total + (item.price * item.quantity), 0)
-      }
-    }),
-    {
-      name: 'cart-storage'
-    }
-  )
-)
+  return {
+    items: cart.items,
+
+    addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
+      // Convert old format to new format
+      cart.addItem({
+        product: {
+          id: item.productId,
+          name: item.name,
+          price: item.price,
+          images: [item.image],
+          store_id: '', // Will be set by the product data
+        },
+        quantity: item.quantity || 1,
+        size: item.size,
+        color: item.color,
+      })
+    },
+
+    removeItem: (id: string) => {
+      cart.removeItem(id)
+    },
+
+    updateQuantity: (id: string, quantity: number) => {
+      cart.updateQuantity(id, quantity)
+    },
+
+    clearCart: () => {
+      cart.clear()
+    },
+
+    getTotalItems: () => {
+      return cart.getItemCount()
+    },
+
+    getTotalPrice: () => {
+      return cart.getTotal()
+    },
+  }
+}

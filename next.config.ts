@@ -1,4 +1,15 @@
 import type { NextConfig } from "next";
+const withPWA = require("@ducanh2912/next-pwa").default({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  disable: process.env.NODE_ENV === "development",
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
 
 const nextConfig: NextConfig = {
   images: {
@@ -22,10 +33,18 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
+    optimisticClientCache: true,
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Optimizaciones de rendimiento
+  reactStrictMode: true,
+  swcMinify: true,
+  poweredByHeader: false,
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);

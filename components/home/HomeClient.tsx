@@ -5,6 +5,8 @@ import { SearchBar } from './SearchBar'
 import { CategoriesGrid } from './CategoriesGrid'
 import { ProductsGrid } from './ProductsGrid'
 import { Newsletter } from './Newsletter'
+import { HeroSection } from './HeroSection'
+import { TrendingProducts } from './TrendingProducts'
 
 export function HomeClient() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -21,48 +23,29 @@ export function HomeClient() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero con imagen de fondo */}
-      <section className="relative bg-gray-900 overflow-hidden">
-        {/* Imagen de fondo */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80)',
-            opacity: 0.4
-          }}
-        />
-        
-        {/* Overlay oscuro */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
-        
-        {/* Contenido */}
-        <div className="relative max-w-7xl mx-auto px-4 py-12">
-          {/* Título */}
-          <h1 className="text-4xl md:text-5xl font-bold text-center mb-2 text-white">
-            Moda Start
-          </h1>
-          <p className="text-center text-gray-200 mb-6 text-lg">
-            Encuentra tu estilo perfecto
-          </p>
-          
-          {/* Buscador */}
-          <SearchBar onSearch={handleSearch} />
-          
-          {/* Categorías pegadas debajo */}
-          <div className="mt-4">
-            <CategoriesGrid 
-              onCategorySelect={handleCategorySelect}
-              selectedCategory={selectedCategory}
-            />
+    <div className="min-h-screen bg-deep-black">
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Search & Categories */}
+      <section className="relative z-10 mt-0 pb-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+            <SearchBar onSearch={handleSearch} />
+            <div className="mt-8">
+              <CategoriesGrid
+                onCategorySelect={handleCategorySelect}
+                selectedCategory={selectedCategory}
+              />
+            </div>
           </div>
         </div>
       </section>
 
       {/* Grid de productos */}
-      <section className="py-8">
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <ProductsGrid 
+          <ProductsGrid
             searchQuery={searchQuery}
             category={selectedCategory}
             filters={filters}
@@ -71,7 +54,7 @@ export function HomeClient() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-20 bg-black border-t border-white/10">
         <Newsletter />
       </section>
     </div>

@@ -45,7 +45,7 @@ export function RegisterForm() {
         phone: formData.phone,
         role: formData.role
       })
-      
+
       toast.success('¡Cuenta creada! Revisa tu email para confirmar')
       router.push('/auth/login')
     } catch (error: any) {
@@ -71,11 +71,10 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={() => setFormData({ ...formData, role: 'customer' })}
-              className={`p-4 border-2 rounded-lg transition-all ${
-                formData.role === 'customer'
-                  ? 'border-black bg-black text-white'
-                  : 'border-gray-300 hover:border-black'
-              }`}
+              className={`p-4 border-2 rounded-lg transition-all ${formData.role === 'customer'
+                ? 'border-black bg-black text-white'
+                : 'border-gray-300 hover:border-black'
+                }`}
             >
               <User className="w-6 h-6 mx-auto mb-2" />
               <span className="text-sm font-semibold">Cliente</span>
@@ -83,11 +82,10 @@ export function RegisterForm() {
             <button
               type="button"
               onClick={() => setFormData({ ...formData, role: 'store_owner' })}
-              className={`p-4 border-2 rounded-lg transition-all ${
-                formData.role === 'store_owner'
-                  ? 'border-black bg-black text-white'
-                  : 'border-gray-300 hover:border-black'
-              }`}
+              className={`p-4 border-2 rounded-lg transition-all ${formData.role === 'store_owner'
+                ? 'border-black bg-black text-white'
+                : 'border-gray-300 hover:border-black'
+                }`}
             >
               <Store className="w-6 h-6 mx-auto mb-2" />
               <span className="text-sm font-semibold">Dueño de Tienda</span>
@@ -107,7 +105,7 @@ export function RegisterForm() {
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
               required
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="Juan Pérez"
             />
           </div>
@@ -125,7 +123,7 @@ export function RegisterForm() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="tu@email.com"
             />
           </div>
@@ -142,7 +140,7 @@ export function RegisterForm() {
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="300 123 4567"
             />
           </div>
@@ -160,7 +158,7 @@ export function RegisterForm() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
-              className="w-full pl-10 pr-12 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-12 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="••••••••"
             />
             <button
@@ -185,7 +183,7 @@ export function RegisterForm() {
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               required
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none transition-colors !text-black bg-white"
               placeholder="••••••••"
             />
           </div>

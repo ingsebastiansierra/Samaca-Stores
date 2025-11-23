@@ -8,10 +8,10 @@ import Link from 'next/link'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  
+
   // Verificar autenticación
   const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+
   if (userError || !user) {
     console.error('Error de autenticación:', userError)
     redirect('/auth/login')
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
             No tienes una tienda asignada
           </h1>
           <p className="text-gray-600 mb-6">
-            Tu cuenta está activa pero aún no tienes una tienda vinculada. 
+            Tu cuenta está activa pero aún no tienes una tienda vinculada.
             Contacta al administrador o crea una nueva tienda.
           </p>
           <div className="space-y-3">
@@ -46,30 +46,34 @@ export default async function DashboardPage() {
             >
               Crear Nueva Tienda
             </Link>
-            <button
-              onClick={() => window.location.href = '/'}
-              className="block w-full px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-colors"
+            <Link
+              href="/"
+              className="block w-full px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-colors text-center"
             >
               Volver al Inicio
-            </button>
+            </Link>
           </div>
         </div>
       </div>
     )
   }
 
-  // Obtener estadísticas
-  const { data: products } = await supabase
-    .from('products')
-    .select('id, stock, price')
-    .eq('store_id', store.id)
-
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('id, total, status, created_at')
-    .eq('store_id', store.id)
-    .order('created_at', { ascending: false })
-    .limit(10)
+  // Obtener estadísticas en paralelo para mayor velocidad
+  const [
+    { data: products },
+    { data: orders }
+  ] = await Promise.all([
+    supabase
+      .from('products')
+      .select('id, stock, price')
+      .eq('store_id', store.id),
+    supabase
+      .from('orders')
+      .select('id, total, status, created_at, ticket, customer_name')
+      .eq('store_id', store.id)
+      .order('created_at', { ascending: false })
+      .limit(10)
+  ])
 
   const totalProducts = products?.length || 0
   const totalOrders = orders?.length || 0
