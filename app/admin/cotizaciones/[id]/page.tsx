@@ -12,9 +12,6 @@ import {
     MapPin,
     MessageCircle,
     CheckCircle,
-    XCircle,
-    Clock,
-    DollarSign,
     Loader2
 } from 'lucide-react';
 import Link from 'next/link';
@@ -60,6 +57,8 @@ export default function AdminQuotationDetailPage() {
 
         try {
             setConverting(true);
+            console.log('Converting quotation:', quotation.id);
+
             const response = await fetch('/api/quotations/convert', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -67,11 +66,17 @@ export default function AdminQuotationDetailPage() {
             });
 
             const data = await response.json();
+            console.log('Conversion response:', data);
 
             if (!response.ok) throw new Error(data.error || 'Error al convertir venta');
 
             toast.success('¡Venta cerrada exitosamente! 🎉');
-            loadQuotation(); // Recargar datos
+
+            // Esperar un momento antes de recargar para asegurar que la BD se actualizó
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await loadQuotation(); // Recargar datos
+
+            console.log('Quotation reloaded, new status:', quotation.status);
         } catch (error: any) {
             console.error('Error closing sale:', error);
             toast.error(error.message);
@@ -89,39 +94,41 @@ export default function AdminQuotationDetailPage() {
     const isConverted = quotation.status === 'converted';
 
     return (
-        <div className="p-6 max-w-5xl mx-auto">
+        <div className="p-4 md:p-6 max-w-5xl mx-auto pt-20 md:pt-6">
             {/* Header */}
-            <div className="mb-8">
+            <div className="mb-6 md:mb-8">
                 <Link href="/admin/cotizaciones">
                     <Button variant="ghost" size="sm" className="mb-4 text-gray-600">
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Volver al listado
+                        Volver
                     </Button>
                 </Link>
 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col gap-4">
                     <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <h1 className="text-3xl font-bold text-gray-900">
+                        <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
+                            <h1 className="text-xl md:text-3xl font-bold text-gray-900">
                                 Cotización {quotation.ticket}
                             </h1>
-                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${isConverted ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800'
+                            <span className={`px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-medium ${isConverted ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800'
                                 }`}>
                                 {isConverted ? 'Venta Cerrada' : 'Pendiente'}
                             </span>
                         </div>
-                        <p className="text-gray-500">
-                            Creada el {format(new Date(quotation.created_at), "d 'de' MMMM, yyyy 'a las' HH:mm", { locale: es })}
+                        <p className="text-sm md:text-base text-gray-500">
+                            Creada el {format(new Date(quotation.created_at), "d 'de' MMMM, yyyy", { locale: es })}
                         </p>
                     </div>
 
-                    <div className="flex gap-3">
+                    {/* Botones - Stack en móvil, fila en desktop */}
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                         <a
                             href={`https://wa.me/${quotation.customer_phone}?text=Hola ${quotation.customer_name}, te escribo sobre tu cotización ${quotation.ticket}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="w-full sm:w-auto"
                         >
-                            <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
+                            <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50">
                                 <MessageCircle className="h-4 w-4 mr-2" />
                                 WhatsApp Cliente
                             </Button>
@@ -131,7 +138,7 @@ export default function AdminQuotationDetailPage() {
                             <Button
                                 onClick={handleCloseSale}
                                 disabled={converting}
-                                className="bg-green-600 hover:bg-green-700 text-white"
+                                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
                             >
                                 {converting ? (
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -145,12 +152,12 @@ export default function AdminQuotationDetailPage() {
                 </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6 md:gap-8">
                 {/* Main Content */}
                 <div className="md:col-span-2 space-y-6">
                     {/* Products */}
                     <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
-                        <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                        <div className="p-4 border-b bg-gray-50">
                             <h2 className="font-semibold text-gray-900 flex items-center gap-2">
                                 <Package className="h-5 w-5" />
                                 Productos ({quotation.items.length})
@@ -158,8 +165,8 @@ export default function AdminQuotationDetailPage() {
                         </div>
                         <div className="divide-y">
                             {quotation.items.map((item: any, idx: number) => (
-                                <div key={idx} className="p-4 flex gap-4">
-                                    <div className="relative h-16 w-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+                                <div key={idx} className="p-4 flex gap-3 md:gap-4">
+                                    <div className="relative h-14 w-14 md:h-16 md:w-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
                                         {item.image_url ? (
                                             <Image
                                                 src={item.image_url}
@@ -173,15 +180,15 @@ export default function AdminQuotationDetailPage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="font-medium text-gray-900">{item.name}</h3>
-                                        <div className="text-sm text-gray-500">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium text-gray-900 text-sm md:text-base truncate">{item.name}</h3>
+                                        <div className="text-xs md:text-sm text-gray-500">
                                             {item.size && <span>Talla: {item.size} • </span>}
                                             {item.color && <span>Color: {item.color}</span>}
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className="font-medium text-gray-900">
+                                        <p className="font-medium text-gray-900 text-sm md:text-base">
                                             ${(item.price * item.quantity).toLocaleString()}
                                         </p>
                                         <p className="text-xs text-gray-500">
@@ -193,7 +200,7 @@ export default function AdminQuotationDetailPage() {
                         </div>
                         <div className="p-4 bg-gray-50 border-t flex justify-between items-center">
                             <span className="font-semibold text-gray-900">Total Venta</span>
-                            <span className="text-xl font-bold text-green-700">
+                            <span className="text-lg md:text-xl font-bold text-green-700">
                                 ${quotation.total.toLocaleString()}
                             </span>
                         </div>
@@ -203,12 +210,12 @@ export default function AdminQuotationDetailPage() {
                 {/* Sidebar */}
                 <div className="space-y-6">
                     {/* Customer Info */}
-                    <div className="bg-white border rounded-lg p-6 shadow-sm">
+                    <div className="bg-white border rounded-lg p-4 md:p-6 shadow-sm">
                         <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <User className="h-5 w-5" />
                             Datos del Cliente
                         </h2>
-                        <div className="space-y-4">
+                        <div className="space-y-3 md:space-y-4">
                             <div>
                                 <label className="text-xs text-gray-500 uppercase font-semibold">Nombre</label>
                                 <p className="text-gray-900 font-medium">{quotation.customer_name}</p>
@@ -232,7 +239,7 @@ export default function AdminQuotationDetailPage() {
 
                     {/* Sale Status */}
                     {isConverted && (
-                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 md:p-6">
                             <h2 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
                                 <CheckCircle className="h-5 w-5" />
                                 Venta Registrada

@@ -119,6 +119,11 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
+
+                {/* User Menu for Mobile */}
+                <div className="pt-3 border-t border-gray-200">
+                  <UserMenu isMobile={true} />
+                </div>
               </div>
             </motion.div>
           )}

@@ -89,20 +89,32 @@ export async function POST(request: Request) {
         }
 
         // 5. Actualizar la Cotización
-        const { error: updateError } = await supabase
+        console.log('Attempting to update quotation:', quotationId);
+        console.log('Update data:', {
+            status: 'converted',
+            converted_to_order_id: order.id,
+            updated_at: new Date().toISOString(),
+        });
+
+        const { data: updatedQuotation, error: updateError } = await supabase
             .from('quotations')
             .update({
                 status: 'converted',
                 converted_to_order_id: order.id,
                 updated_at: new Date().toISOString(),
             })
-            .eq('id', quotationId);
+            .eq('id', quotationId)
+            .select()
+            .single();
+
+        console.log('Update result:', { updatedQuotation, updateError });
 
         if (updateError) {
             console.error('Error updating quotation:', updateError);
-            // Nota: La orden ya se creó, esto es un estado inconsistente menor.
-            // En producción usaríamos una transacción SQL.
+            throw new Error(`Error al actualizar la cotización: ${updateError.message}`);
         }
+
+        console.log('Quotation updated successfully:', updatedQuotation);
 
         // 6. Registrar evento
         await supabase.from('quotation_events').insert({

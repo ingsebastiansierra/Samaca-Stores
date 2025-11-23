@@ -8,7 +8,7 @@ import { getCurrentUser, signOut } from '@/lib/auth/auth-helpers'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 
-export function UserMenu() {
+export function UserMenu({ isMobile = false }: { isMobile?: boolean }) {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -53,16 +53,16 @@ export function UserMenu() {
 
   if (!user) {
     return (
-      <div className="flex items-center gap-2">
+      <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2`}>
         <Link
           href="/auth/login"
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors text-center"
         >
           Iniciar Sesión
         </Link>
         <Link
           href="/auth/register"
-          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors"
+          className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 font-medium transition-colors text-center"
         >
           Registrarse
         </Link>
@@ -70,6 +70,71 @@ export function UserMenu() {
     )
   }
 
+  // Mobile version - show links directly
+  if (isMobile) {
+    return (
+      <div className="space-y-2">
+        <div className="px-4 py-2 bg-gray-50 rounded-lg">
+          <p className="font-bold text-black text-sm">
+            {user.user_metadata?.full_name || 'Usuario'}
+          </p>
+          <p className="text-xs text-gray-600">{user.email}</p>
+        </div>
+
+        <Link
+          href="/perfil"
+          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+        >
+          <User className="w-5 h-5" />
+          <span>Mi Perfil</span>
+        </Link>
+
+        <Link
+          href="/mis-pedidos"
+          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+        >
+          <ShoppingBag className="w-5 h-5" />
+          <span>Mis Pedidos</span>
+        </Link>
+
+        <Link
+          href="/perfil/cotizaciones"
+          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+        >
+          <FileText className="w-5 h-5" />
+          <span>Mis Cotizaciones</span>
+        </Link>
+
+        {user.user_metadata?.role !== 'customer' && (
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+          >
+            <Store className="w-5 h-5" />
+            <span>Panel Admin</span>
+          </Link>
+        )}
+
+        <Link
+          href="/configuracion"
+          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+        >
+          <Settings className="w-5 h-5" />
+          <span>Configuración</span>
+        </Link>
+
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-4 py-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    )
+  }
+
+  // Desktop version - dropdown menu
   return (
     <div className="relative">
       <button

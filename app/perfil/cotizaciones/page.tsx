@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import { 
-  Package, 
-  Store, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
+import { Button } from '@/components/ui/Button';
+import {
+  Package,
+  Store,
+  Clock,
+  CheckCircle,
+  XCircle,
   MessageCircle,
   Eye,
   Copy
@@ -125,7 +125,7 @@ export default function MisCotizacionesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl pt-24">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Mis Cotizaciones</h1>
@@ -194,7 +194,7 @@ export default function MisCotizacionesPage() {
             No hay cotizaciones
           </h3>
           <p className="mt-2 text-sm text-gray-500">
-            {filter === 'all' 
+            {filter === 'all'
               ? 'Aún no has creado ninguna cotización'
               : `No hay cotizaciones con estado "${STATUS_CONFIG[filter as keyof typeof STATUS_CONFIG]?.label}"`
             }
@@ -231,7 +231,7 @@ export default function MisCotizacionesPage() {
                         <Copy className="h-4 w-4" />
                       </button>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Store className="h-4 w-4" />
                       <span>{quotation.store_name}</span>
@@ -269,24 +269,24 @@ export default function MisCotizacionesPage() {
                 {/* Timeline */}
                 <div className="mb-4 text-xs text-gray-500 space-y-1">
                   <p>
-                    📅 Creada {formatDistanceToNow(new Date(quotation.created_at), { 
+                    📅 Creada {formatDistanceToNow(new Date(quotation.created_at), {
                       addSuffix: true,
-                      locale: es 
+                      locale: es
                     })}
                   </p>
                   {quotation.whatsapp_sent_at && (
                     <p>
-                      📱 WhatsApp enviado {formatDistanceToNow(new Date(quotation.whatsapp_sent_at), { 
+                      📱 WhatsApp enviado {formatDistanceToNow(new Date(quotation.whatsapp_sent_at), {
                         addSuffix: true,
-                        locale: es 
+                        locale: es
                       })}
                     </p>
                   )}
                   {quotation.store_responded_at && (
                     <p>
-                      💬 Tienda respondió {formatDistanceToNow(new Date(quotation.store_responded_at), { 
+                      💬 Tienda respondió {formatDistanceToNow(new Date(quotation.store_responded_at), {
                         addSuffix: true,
-                        locale: es 
+                        locale: es
                       })}
                     </p>
                   )}
@@ -300,7 +300,7 @@ export default function MisCotizacionesPage() {
                       Ver Detalles
                     </Button>
                   </Link>
-                  
+
                   {quotation.store_whatsapp && (
                     <a
                       href={`https://wa.me/${quotation.store_whatsapp}?text=Hola, consulto por la cotización ${quotation.ticket}`}

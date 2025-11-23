@@ -66,12 +66,13 @@ export function AdminSidebar() {
         }
 
         if (storeId) {
-          // Count Pending Quotations
+          // Count Pending Quotations (only unviewed)
           const { count } = await supabase
             .from('quotations')
             .select('*', { count: 'exact', head: true })
             .eq('store_id', storeId)
             .eq('status', 'pending')
+            .is('admin_viewed_at', null)
 
           setPendingQuotations(count || 0)
         }
@@ -126,8 +127,8 @@ export function AdminSidebar() {
                   href={item.href}
                   prefetch={true}
                   className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isActive
-                    ? 'bg-white text-black'
-                    : 'text-gray-300 hover:bg-gray-800'
+                      ? 'bg-white text-black'
+                      : 'text-gray-300 hover:bg-gray-800'
                     }`}
                 >
                   <div className="flex items-center gap-3">
