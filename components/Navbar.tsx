@@ -1,47 +1,54 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { ShoppingCart, Menu, X, Store } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useCart } from '@/lib/hooks/useCart'
-import { UserMenu } from './auth/UserMenu'
+import Link from 'next/link';
+import { ShoppingCart, Menu, X, Store } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/lib/hooks/useCart';
+import { UserMenu } from './auth/UserMenu';
+import { usePathname } from 'next/navigation';
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const { getItemCount } = useCart()
-  const totalItems = mounted ? getItemCount() : 0
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const { getItemCount } = useCart();
+  const totalItems = mounted ? getItemCount() : 0;
+
+  const pathname = usePathname();
+  const isStorePage = pathname === '/tiendas';
+  const isStoreDetail = pathname.startsWith('/tienda/');
+
+  const navBackgroundClass =
+    isStorePage || isStoreDetail
+      ? 'bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg'
+      : scrolled
+        ? 'bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg'
+        : 'bg-transparent';
 
   useEffect(() => {
-    setMounted(true)
-    const handleScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    setMounted(true);
+    const handleScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navLinks = [
     { href: '/', label: 'Inicio' },
     { href: '/catalogo', label: 'Productos' },
     { href: '/tiendas', label: 'Tiendas' },
     { href: '/promociones', label: 'Ofertas' },
-  ]
+  ];
 
   return (
     <nav className={`fixed top-4 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'px-4 md:px-8' : 'px-0'}`}>
-      <div className={`max-w-7xl mx-auto transition-all duration-300 ${scrolled
-        ? 'bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg'
-        : 'bg-transparent'
-        }`}>
+      <div className={`max-w-7xl mx-auto transition-all duration-300 ${navBackgroundClass}`}>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-2"
-              >
+              <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2">
                 <div className="w-10 h-10 bg-sky-600 border border-sky-700 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
                   <Store className="w-6 h-6 text-white" />
                 </div>
@@ -53,7 +60,7 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              {navLinks.map(link => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -109,7 +116,7 @@ export function Navbar() {
               className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-xl rounded-b-2xl overflow-hidden"
             >
               <div className="px-4 py-4 space-y-3">
-                {navLinks.map(link => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -130,5 +137,5 @@ export function Navbar() {
         </AnimatePresence>
       </div>
     </nav>
-  )
+  );
 }
