@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { OrdersTable } from '@/components/admin/orders/OrdersTable'
-import { Search } from 'lucide-react'
+import { OrdersFilters } from '@/components/admin/orders/OrdersFilters'
 
 export default async function OrdersPage({
   searchParams,
@@ -10,7 +10,7 @@ export default async function OrdersPage({
 }) {
   const params = await searchParams
   const supabase = await createClient()
-  
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
@@ -33,46 +33,40 @@ export default async function OrdersPage({
   }
 
   if (params.search) {
-    query = query.or(`ticket.ilike.%${params.search}%,customer_name.ilike.%${params.search}%`)
+    // Buscar en múltiples campos: ticket, nombre, teléfono, total
+    const searchTerm = params.search.toLowerCase()
+
+    // Si el término de búsqueda es un número, también buscar en total
+    const isNumeric = !isNaN(Number(searchTerm.replace(/[,$]/g, '')))
+
+    if (isNumeric) {
+      // Buscar en ticket, nombre, teléfono y total
+      query = query.or(
+        `ticket.ilike.%${params.search}%,` +
+        `customer_name.ilike.%${params.search}%,` +
+        `customer_phone.ilike.%${params.search}%,` +
+        `total.eq.${searchTerm.replace(/[,$]/g, '')}`
+      )
+    } else {
+      // Buscar solo en campos de texto
+      query = query.or(
+        `ticket.ilike.%${params.search}%,` +
+        `customer_name.ilike.%${params.search}%,` +
+        `customer_phone.ilike.%${params.search}%`
+      )
+    }
   }
 
   const { data: orders } = await query
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <div>
-        <h1 className="text-3xl font-bold text-black">Pedidos</h1>
-        <p className="text-gray-600 mt-1">Gestiona los pedidos de tu tienda</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-black">Pedidos</h1>
+        <p className="text-gray-600 mt-1 text-sm md:text-base">Gestiona los pedidos de tu tienda</p>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <div className="flex gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              name="search"
-              placeholder="Buscar por ticket o cliente..."
-              defaultValue={params.search}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
-            />
-          </div>
-          <select
-            name="status"
-            defaultValue={params.status}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
-          >
-            <option value="">Todos los estados</option>
-            <option value="pending">Pendiente</option>
-            <option value="confirmed">Confirmado</option>
-            <option value="preparing">Preparando</option>
-            <option value="ready">Listo</option>
-            <option value="delivered">Entregado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        </div>
-      </div>
+      <OrdersFilters />
 
       <OrdersTable orders={orders || []} />
     </div>

@@ -22,7 +22,7 @@ const menuItems = [
   { href: '/admin/products', label: 'Productos', icon: Package },
   { href: '/admin/categories', label: 'Categorías', icon: FolderTree },
   { href: '/admin/orders', label: 'Pedidos', icon: ShoppingCart },
-  { href: '/admin/stats', label: 'Estadísticas', icon: BarChart3 },
+  { href: '/admin/stats', label: 'Ventas', icon: BarChart3 },
   { href: '/admin/settings', label: 'Configuración', icon: Settings },
 ]
 
@@ -127,8 +127,8 @@ export function AdminSidebar() {
                   href={item.href}
                   prefetch={true}
                   className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isActive
-                      ? 'bg-white text-black'
-                      : 'text-gray-300 hover:bg-gray-800'
+                    ? 'bg-white text-black'
+                    : 'text-gray-300 hover:bg-gray-800'
                     }`}
                 >
                   <div className="flex items-center gap-3">
