@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { CheckCircle, MessageCircle, Eye, Package, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -232,7 +232,7 @@ function ConfirmacionContent() {
           </Button>
         </Link>
         <Link href="/catalogo">
-          <Button size="lg">Seguir Comprando</Button>
+          <Button size="lg" className="bg-sky-600 hover:bg-sky-700 text-white">Seguir Comprando</Button>
         </Link>
       </div>
     </div>

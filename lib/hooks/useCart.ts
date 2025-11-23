@@ -100,9 +100,21 @@ export const useCart = create<CartStore>()(
 
       getStoreGroups: () => {
         const groups: Record<string, CartItem[]> = {};
+        let firstStoreId: string | null = null;
 
-        get().items.forEach((item) => {
-          const storeId = item.product.store_id;
+        // First pass: Identify the first valid store ID
+        const items = get().items;
+        for (const item of items) {
+          if (item.product.store_id) {
+            firstStoreId = item.product.store_id;
+            break;
+          }
+        }
+
+        items.forEach((item) => {
+          // Use the item's store_id, or fallback to the first valid store ID found, or 'unknown'
+          const storeId = item.product.store_id || firstStoreId || 'unknown';
+
           if (!groups[storeId]) {
             groups[storeId] = [];
           }

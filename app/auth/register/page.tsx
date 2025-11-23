@@ -83,7 +83,7 @@ export default function RegisterPage() {
           setLoading(false)
           return
         }
-        
+
         if (storeOption === 'new') {
           newStoreSchema.parse(storeData)
         }
@@ -151,10 +151,10 @@ export default function RegisterPage() {
             .eq('id', selectedStoreId)
         }
       }
-      
+
       setSuccess(true)
       toast.success('¡Cuenta creada! Revisa tu correo para confirmar.')
-      
+
       // Redirigir después de 3 segundos
       setTimeout(() => {
         router.push('/auth/login')
@@ -198,19 +198,19 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex pt-24">
       {/* Left Side - Features */}
       <div className="hidden lg:flex lg:w-1/2 bg-black text-white p-12 flex-col justify-between">
         <div>
           <Link href="/" className="text-2xl font-bold mb-12 block">
             Samacá Store
           </Link>
-          
+
           <div className="space-y-8 mt-16">
             <h2 className="text-4xl font-bold leading-tight">
               Administra tu tienda<br />de forma profesional
             </h2>
-            
+
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -221,7 +221,7 @@ export default function RegisterPage() {
                   <p className="text-gray-300">Gestiona productos, pedidos e inventario desde un solo lugar</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <ShoppingBag className="w-6 h-6" />
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                   <p className="text-gray-300">Recibe pedidos 24/7 y aumenta tus ventas</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   <CheckCircle className="w-6 h-6" />
@@ -244,7 +244,7 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="text-sm text-gray-400">
           © 2024 Samacá Store. Todos los derechos reservados.
         </div>
@@ -272,358 +272,352 @@ export default function RegisterPage() {
 
           {/* Form */}
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-800">{error}</p>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-800">{error}</p>
+                </div>
+              )}
+
+              {/* Full Name */}
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-bold text-black mb-2">
+                  Nombre Completo
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="fullName"
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                    placeholder="Juan Pérez"
+                  />
+                </div>
               </div>
-            )}
 
-            {/* Full Name */}
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-bold text-black mb-2">
-                Nombre Completo
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  id="fullName"
-                  type="text"
-                  required
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
-                  placeholder="Juan Pérez"
-                />
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-bold text-black mb-2">
+                  Correo Electrónico
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                    placeholder="tu@email.com"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-bold text-black mb-2">
-                Correo Electrónico
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  id="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
-                  placeholder="tu@email.com"
-                />
+              {/* Phone */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-bold text-black mb-2">
+                  Teléfono
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="phone"
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                    placeholder="3001234567"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-bold text-black mb-2">
-                Teléfono
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  id="phone"
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
-                  placeholder="3001234567"
-                />
-              </div>
-            </div>
-
-            {/* Account Type */}
-            <div>
-              <label className="block text-sm font-bold text-black mb-3">
-                Tipo de Cuenta
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, accountType: 'customer' })}
-                  className={`p-4 border-2 rounded-lg transition-all ${
-                    formData.accountType === 'customer'
-                      ? 'border-black bg-black text-white'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <User className="w-6 h-6 mx-auto mb-2" />
-                  <div className="text-sm font-semibold">Cliente</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, accountType: 'store_admin' })}
-                  className={`p-4 border-2 rounded-lg transition-all ${
-                    formData.accountType === 'store_admin'
-                      ? 'border-black bg-black text-white'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <Building2 className="w-6 h-6 mx-auto mb-2" />
-                  <div className="text-sm font-semibold">Dueño de Tienda</div>
-                </button>
-              </div>
-            </div>
-
-            {/* Store Information - Only if store_admin */}
-            {formData.accountType === 'store_admin' && (
-              <div className="space-y-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200">
-                <h3 className="font-bold text-black flex items-center gap-2 text-lg">
-                  <Store className="w-5 h-5" />
-                  Información de tu Tienda
-                </h3>
-
-                {/* Store Option Selector */}
+              {/* Account Type */}
+              <div>
+                <label className="block text-sm font-bold text-black mb-3">
+                  Tipo de Cuenta
+                </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setStoreOption('new')}
-                    className={`p-4 border-2 rounded-lg transition-all ${
-                      storeOption === 'new'
-                        ? 'border-black bg-white shadow-md'
-                        : 'border-gray-300 bg-white/50 hover:border-gray-400'
-                    }`}
+                    onClick={() => setFormData({ ...formData, accountType: 'customer' })}
+                    className={`p-4 border-2 rounded-lg transition-all ${formData.accountType === 'customer'
+                        ? 'border-black bg-black text-white'
+                        : 'border-gray-200 hover:border-gray-300'
+                      }`}
                   >
-                    <Plus className="w-5 h-5 mx-auto mb-2" />
-                    <div className="text-sm font-semibold">Crear Nueva</div>
+                    <User className="w-6 h-6 mx-auto mb-2" />
+                    <div className="text-sm font-semibold">Cliente</div>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setStoreOption('existing')}
-                    className={`p-4 border-2 rounded-lg transition-all ${
-                      storeOption === 'existing'
-                        ? 'border-black bg-white shadow-md'
-                        : 'border-gray-300 bg-white/50 hover:border-gray-400'
-                    }`}
+                    onClick={() => setFormData({ ...formData, accountType: 'store_admin' })}
+                    className={`p-4 border-2 rounded-lg transition-all ${formData.accountType === 'store_admin'
+                        ? 'border-black bg-black text-white'
+                        : 'border-gray-200 hover:border-gray-300'
+                      }`}
                   >
-                    <LinkIcon className="w-5 h-5 mx-auto mb-2" />
-                    <div className="text-sm font-semibold">Vincular Existente</div>
+                    <Building2 className="w-6 h-6 mx-auto mb-2" />
+                    <div className="text-sm font-semibold">Dueño de Tienda</div>
                   </button>
                 </div>
+              </div>
 
-                {/* Existing Store Selection */}
-                {storeOption === 'existing' && (
-                  <div>
-                    <label htmlFor="existingStore" className="block text-sm font-bold text-black mb-2">
-                      Selecciona tu Tienda *
-                    </label>
-                    {loadingStores ? (
-                      <div className="text-center py-4 text-gray-500">
-                        Cargando tiendas...
-                      </div>
-                    ) : existingStores.length === 0 ? (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
-                        No hay tiendas disponibles para vincular. Todas las tiendas ya tienen un dueño asignado.
-                      </div>
-                    ) : (
-                      <select
-                        id="existingStore"
-                        required={storeOption === 'existing'}
-                        value={selectedStoreId}
-                        onChange={(e) => setSelectedStoreId(e.target.value)}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
-                      >
-                        <option value="">-- Selecciona una tienda --</option>
-                        {existingStores.map((store) => (
-                          <option key={store.id} value={store.id}>
-                            {store.name} - {store.city}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                    <p className="text-xs text-gray-600 mt-2">
-                      Esta opción es para dueños cuya tienda ya fue creada por el administrador
-                    </p>
-                  </div>
-                )}
+              {/* Store Information - Only if store_admin */}
+              {formData.accountType === 'store_admin' && (
+                <div className="space-y-4 p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-gray-200">
+                  <h3 className="font-bold text-black flex items-center gap-2 text-lg">
+                    <Store className="w-5 h-5" />
+                    Información de tu Tienda
+                  </h3>
 
-                {/* New Store Form */}
-                {storeOption === 'new' && (
-                  <>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label htmlFor="storeName" className="block text-sm font-bold text-black mb-2">
-                      Nombre de la Tienda *
-                    </label>
-                    <input
-                      id="storeName"
-                      type="text"
-                      required={formData.accountType === 'store_admin'}
-                      value={storeData.storeName}
-                      onChange={(e) => setStoreData({ ...storeData, storeName: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
-                      placeholder="Ej: Boutique Elegancia"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label htmlFor="storeDescription" className="block text-sm font-bold text-black mb-2">
-                      Descripción de la Tienda *
-                    </label>
-                    <textarea
-                      id="storeDescription"
-                      required={formData.accountType === 'store_admin'}
-                      value={storeData.storeDescription}
-                      onChange={(e) => setStoreData({ ...storeData, storeDescription: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white resize-none"
-                      placeholder="Describe tu tienda y los productos que vendes..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label htmlFor="storeCategory" className="block text-sm font-bold text-black mb-2">
-                      Categoría Principal *
-                    </label>
-                    <select
-                      id="storeCategory"
-                      required={formData.accountType === 'store_admin'}
-                      value={storeData.storeCategory}
-                      onChange={(e) => setStoreData({ ...storeData, storeCategory: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                  {/* Store Option Selector */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStoreOption('new')}
+                      className={`p-4 border-2 rounded-lg transition-all ${storeOption === 'new'
+                          ? 'border-black bg-white shadow-md'
+                          : 'border-gray-300 bg-white/50 hover:border-gray-400'
+                        }`}
                     >
-                      <option value="ropa">Ropa y Moda</option>
-                      <option value="zapatos">Zapatos y Calzado</option>
-                      <option value="accesorios">Accesorios</option>
-                      <option value="deportes">Deportes</option>
-                      <option value="infantil">Ropa Infantil</option>
-                      <option value="hogar">Hogar y Decoración</option>
-                      <option value="tecnologia">Tecnología</option>
-                      <option value="otros">Otros</option>
-                    </select>
+                      <Plus className="w-5 h-5 mx-auto mb-2" />
+                      <div className="text-sm font-semibold">Crear Nueva</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStoreOption('existing')}
+                      className={`p-4 border-2 rounded-lg transition-all ${storeOption === 'existing'
+                          ? 'border-black bg-white shadow-md'
+                          : 'border-gray-300 bg-white/50 hover:border-gray-400'
+                        }`}
+                    >
+                      <LinkIcon className="w-5 h-5 mx-auto mb-2" />
+                      <div className="text-sm font-semibold">Vincular Existente</div>
+                    </button>
                   </div>
 
-                  <div>
-                    <label htmlFor="storeAddress" className="block text-sm font-bold text-black mb-2">
-                      Dirección *
-                    </label>
-                    <input
-                      id="storeAddress"
-                      type="text"
-                      required={formData.accountType === 'store_admin'}
-                      value={storeData.storeAddress}
-                      onChange={(e) => setStoreData({ ...storeData, storeAddress: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
-                      placeholder="Calle 5 #12-34"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="storeCity" className="block text-sm font-bold text-black mb-2">
-                      Ciudad *
-                    </label>
-                    <input
-                      id="storeCity"
-                      type="text"
-                      required={formData.accountType === 'store_admin'}
-                      value={storeData.storeCity}
-                      onChange={(e) => setStoreData({ ...storeData, storeCity: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
-                      placeholder="Samacá"
-                    />
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <label htmlFor="storeWhatsapp" className="block text-sm font-bold text-black mb-2">
-                      WhatsApp de la Tienda *
-                    </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <input
-                        id="storeWhatsapp"
-                        type="tel"
-                        required={formData.accountType === 'store_admin'}
-                        value={storeData.storeWhatsapp}
-                        onChange={(e) => setStoreData({ ...storeData, storeWhatsapp: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
-                        placeholder="573001234567"
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Incluye código de país (57 para Colombia)
-                    </p>
-                  </div>
-                </div>
-
-                  <div className="text-xs text-gray-700 bg-blue-50 border border-blue-200 p-3 rounded-lg flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  {/* Existing Store Selection */}
+                  {storeOption === 'existing' && (
                     <div>
-                      <strong>Revisión pendiente:</strong> Tu tienda será revisada por nuestro equipo antes de ser publicada. Te notificaremos cuando esté lista (usualmente en 24-48 horas).
+                      <label htmlFor="existingStore" className="block text-sm font-bold text-black mb-2">
+                        Selecciona tu Tienda *
+                      </label>
+                      {loadingStores ? (
+                        <div className="text-center py-4 text-gray-500">
+                          Cargando tiendas...
+                        </div>
+                      ) : existingStores.length === 0 ? (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
+                          No hay tiendas disponibles para vincular. Todas las tiendas ya tienen un dueño asignado.
+                        </div>
+                      ) : (
+                        <select
+                          id="existingStore"
+                          required={storeOption === 'existing'}
+                          value={selectedStoreId}
+                          onChange={(e) => setSelectedStoreId(e.target.value)}
+                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                        >
+                          <option value="">-- Selecciona una tienda --</option>
+                          {existingStores.map((store) => (
+                            <option key={store.id} value={store.id}>
+                              {store.name} - {store.city}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      <p className="text-xs text-gray-600 mt-2">
+                        Esta opción es para dueños cuya tienda ya fue creada por el administrador
+                      </p>
                     </div>
-                  </div>
-                </>
+                  )}
+
+                  {/* New Store Form */}
+                  {storeOption === 'new' && (
+                    <>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                          <label htmlFor="storeName" className="block text-sm font-bold text-black mb-2">
+                            Nombre de la Tienda *
+                          </label>
+                          <input
+                            id="storeName"
+                            type="text"
+                            required={formData.accountType === 'store_admin'}
+                            value={storeData.storeName}
+                            onChange={(e) => setStoreData({ ...storeData, storeName: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                            placeholder="Ej: Boutique Elegancia"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label htmlFor="storeDescription" className="block text-sm font-bold text-black mb-2">
+                            Descripción de la Tienda *
+                          </label>
+                          <textarea
+                            id="storeDescription"
+                            required={formData.accountType === 'store_admin'}
+                            value={storeData.storeDescription}
+                            onChange={(e) => setStoreData({ ...storeData, storeDescription: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white resize-none"
+                            placeholder="Describe tu tienda y los productos que vendes..."
+                            rows={3}
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label htmlFor="storeCategory" className="block text-sm font-bold text-black mb-2">
+                            Categoría Principal *
+                          </label>
+                          <select
+                            id="storeCategory"
+                            required={formData.accountType === 'store_admin'}
+                            value={storeData.storeCategory}
+                            onChange={(e) => setStoreData({ ...storeData, storeCategory: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                          >
+                            <option value="ropa">Ropa y Moda</option>
+                            <option value="zapatos">Zapatos y Calzado</option>
+                            <option value="accesorios">Accesorios</option>
+                            <option value="deportes">Deportes</option>
+                            <option value="infantil">Ropa Infantil</option>
+                            <option value="hogar">Hogar y Decoración</option>
+                            <option value="tecnologia">Tecnología</option>
+                            <option value="otros">Otros</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label htmlFor="storeAddress" className="block text-sm font-bold text-black mb-2">
+                            Dirección *
+                          </label>
+                          <input
+                            id="storeAddress"
+                            type="text"
+                            required={formData.accountType === 'store_admin'}
+                            value={storeData.storeAddress}
+                            onChange={(e) => setStoreData({ ...storeData, storeAddress: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                            placeholder="Calle 5 #12-34"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="storeCity" className="block text-sm font-bold text-black mb-2">
+                            Ciudad *
+                          </label>
+                          <input
+                            id="storeCity"
+                            type="text"
+                            required={formData.accountType === 'store_admin'}
+                            value={storeData.storeCity}
+                            onChange={(e) => setStoreData({ ...storeData, storeCity: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                            placeholder="Samacá"
+                          />
+                        </div>
+
+                        <div className="md:col-span-2">
+                          <label htmlFor="storeWhatsapp" className="block text-sm font-bold text-black mb-2">
+                            WhatsApp de la Tienda *
+                          </label>
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                              id="storeWhatsapp"
+                              type="tel"
+                              required={formData.accountType === 'store_admin'}
+                              value={storeData.storeWhatsapp}
+                              onChange={(e) => setStoreData({ ...storeData, storeWhatsapp: e.target.value })}
+                              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black bg-white"
+                              placeholder="573001234567"
+                            />
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Incluye código de país (57 para Colombia)
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-gray-700 bg-blue-50 border border-blue-200 p-3 rounded-lg flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Revisión pendiente:</strong> Tu tienda será revisada por nuestro equipo antes de ser publicada. Te notificaremos cuando esté lista (usualmente en 24-48 horas).
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Password */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-bold text-black mb-2">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-black ${fieldErrors.password ? 'border-red-500' : 'border-gray-200'
+                      }`}
+                    placeholder="••••••••"
+                  />
+                </div>
+                {fieldErrors.password && (
+                  <p className="text-xs text-red-600 mt-1">{fieldErrors.password}</p>
+                )}
+                <div className="mt-2">
+                  <PasswordStrengthIndicator password={formData.password} />
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-bold text-black mb-2">
+                  Confirmar Contraseña
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-black ${fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                      }`}
+                    placeholder="••••••••"
+                  />
+                </div>
+                {fieldErrors.confirmPassword && (
+                  <p className="text-xs text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
                 )}
               </div>
-            )}
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-bold text-black mb-2">
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-black ${
-                    fieldErrors.password ? 'border-red-500' : 'border-gray-200'
-                  }`}
-                  placeholder="••••••••"
-                />
-              </div>
-              {fieldErrors.password && (
-                <p className="text-xs text-red-600 mt-1">{fieldErrors.password}</p>
-              )}
-              <div className="mt-2">
-                <PasswordStrengthIndicator password={formData.password} />
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-bold text-black mb-2">
-                Confirmar Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className={`w-full pl-10 pr-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-black ${
-                    fieldErrors.confirmPassword ? 'border-red-500' : 'border-gray-200'
-                  }`}
-                  placeholder="••••••••"
-                />
-              </div>
-              {fieldErrors.confirmPassword && (
-                <p className="text-xs text-red-600 mt-1">{fieldErrors.confirmPassword}</p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-black text-white hover:bg-gray-800"
-              size="lg"
-            >
-              {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
-            </Button>
-          </form>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-black text-white hover:bg-gray-800"
+                size="lg"
+              >
+                {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
+              </Button>
+            </form>
 
             {/* Login Link */}
             <div className="mt-6 text-center">

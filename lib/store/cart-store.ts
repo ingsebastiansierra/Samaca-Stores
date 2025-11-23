@@ -13,6 +13,7 @@ export interface CartItem {
   size?: string
   color?: string
   quantity: number
+  storeId?: string
 }
 
 // Create a wrapper hook that adapts useCart to the old API
@@ -30,7 +31,7 @@ export const useCartStore = () => {
           name: item.name,
           price: item.price,
           images: [item.image],
-          store_id: '', // Will be set by the product data
+          store_id: item.storeId || '', // Use provided storeId or empty string
         },
         quantity: item.quantity || 1,
         size: item.size,

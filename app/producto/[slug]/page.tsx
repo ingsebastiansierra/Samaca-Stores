@@ -106,7 +106,8 @@ export default function ProductoPage() {
       image: product.images[0] || '/placeholder.jpg',
       size: selectedSize,
       color: selectedColor,
-      quantity
+      quantity,
+      storeId: product.store_id
     })
 
     toast.success('Producto agregado al carrito', {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useCart, type CartItem } from '@/lib/hooks/useCart';
 import { Button } from '@/components/ui/Button';
 import { ShoppingBag, Store, Trash2 } from 'lucide-react';
@@ -12,6 +12,15 @@ interface GroupedCartProps {
 
 export function GroupedCart({ onCheckout }: GroupedCartProps) {
   const { items, removeItem, updateQuantity, getTotal, getStoreGroups } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   const groupedByStore = getStoreGroups();
   const total = getTotal();

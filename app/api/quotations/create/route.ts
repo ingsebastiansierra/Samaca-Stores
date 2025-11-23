@@ -37,9 +37,29 @@ export async function POST(request: Request) {
 
     // Agrupar items por tienda
     const itemsByStore: Record<string, any[]> = {};
+    const DEFAULT_STORE_ID = 'f00f661a-f20f-448e-aea6-87ab2301fd79'; // Moda Start ID
+    let firstValidStoreId: string | null = null;
+
+    // Encontrar el primer store_id válido
+    for (const item of items) {
+      if (item.product.store_id && item.product.store_id.length > 0) {
+        firstValidStoreId = item.product.store_id;
+        break;
+      }
+    }
 
     items.forEach((item: any) => {
-      const storeId = item.product.store_id;
+      // Usar el store_id del producto, o el primero válido encontrado
+      // Esto corrige productos antiguos en el carrito que no tenían store_id
+      const storeId = item.product.store_id || firstValidStoreId;
+
+      if (!storeId) {
+        console.warn('Item without store_id and no fallback found:', item.product.name);
+        // Si no hay store_id, no podemos procesar este item correctamente
+        // Podríamos asignarlo a una tienda por defecto o saltarlo
+        return;
+      }
+
       if (!itemsByStore[storeId]) {
         itemsByStore[storeId] = [];
       }
@@ -55,7 +75,13 @@ export async function POST(request: Request) {
         0
       );
 
+      // Generar ticket único: COT-TIMESTAMP-RANDOM
+      const timestamp = Date.now().toString().slice(-6);
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      const ticket = `COT-${timestamp}-${random}`;
+
       const quotationData = {
+        ticket, // Added ticket field
         store_id: storeId,
         user_id: user.id,
         customer_name: customerData.name,
@@ -80,6 +106,8 @@ export async function POST(request: Request) {
       };
 
       // Insertar cotización
+      console.log('Inserting quotation:', JSON.stringify(quotationData, null, 2));
+
       const { data: quotation, error: quotationError } = await supabase
         .from('quotations')
         .insert(quotationData)
@@ -87,12 +115,14 @@ export async function POST(request: Request) {
         .single();
 
       if (quotationError) {
-        console.error('Error creating quotation:', quotationError);
-        throw quotationError;
+        console.error('Error creating quotation (DB Insert):', quotationError);
+        throw new Error(`Database error: ${quotationError.message} (${quotationError.code})`);
       }
 
+      console.log('Quotation created successfully:', quotation.id);
+
       // Registrar evento de creación
-      await supabase.from('quotation_events').insert({
+      const { error: eventError } = await supabase.from('quotation_events').insert({
         quotation_id: quotation.id,
         event_type: 'created',
         created_by: user.id,
@@ -102,6 +132,10 @@ export async function POST(request: Request) {
         },
       });
 
+      if (eventError) {
+        console.error('Error creating quotation event:', eventError);
+      }
+
       quotations.push(quotation);
     }
 
@@ -110,12 +144,13 @@ export async function POST(request: Request) {
       quotations,
       message: `Se ${quotations.length === 1 ? 'creó 1 cotización' : `crearon ${quotations.length} cotizaciones`}`,
     });
-  } catch (error) {
-    console.error('Error in quotations/create:', error);
+  } catch (error: any) {
+    console.error('CRITICAL ERROR in quotations/create:', error);
     return NextResponse.json(
       {
         error: 'Error al crear cotizaciones',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: error.message || 'Unknown error',
+        stack: error.stack
       },
       { status: 500 }
     );

@@ -4,21 +4,46 @@ import { Bell, User, LogOut } from 'lucide-react'
 import { signOut } from '@/lib/auth/auth-helpers'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export function AdminHeader() {
   const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    async function checkNotifications() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Get store id first (simplified check)
+      let storeId = null
+      const { data: store } = await supabase.from('stores').select('id').eq('user_id', user.id).single()
+      if (store) {
+        storeId = store.id
+      } else {
+        const { data: staff } = await supabase.from('store_staff').select('store_id').eq('user_id', user.id).single()
+        if (staff) storeId = staff.store_id
+      }
+
+      if (storeId) {
+        const { count } = await supabase
+          .from('quotations')
+          .select('*', { count: 'exact', head: true })
+          .eq('store_id', storeId)
+          .eq('status', 'pending')
+
+        setPendingCount(count || 0)
+      }
+    }
+
+    checkNotifications()
+  }, [])
 
   const handleSignOut = async () => {
-    try {
-      await signOut()
-      toast.success('Sesión cerrada')
-      // Usar window.location para forzar recarga completa y limpiar estado
-      window.location.href = '/'
-    } catch (error) {
-      toast.error('Error al cerrar sesión')
-    }
+    // ...
   }
 
   return (
@@ -30,7 +55,11 @@ export function AdminHeader() {
           {/* Notifications */}
           <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            {pendingCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] flex items-center justify-center">
+                {pendingCount}
+              </span>
+            )}
           </button>
 
           {/* User menu */}

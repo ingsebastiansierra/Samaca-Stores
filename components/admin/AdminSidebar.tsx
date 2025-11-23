@@ -10,13 +10,15 @@ import {
   BarChart3,
   Settings,
   Store,
-  X
+  X,
+  FileText
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const menuItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/cotizaciones', label: 'Cotizaciones', icon: FileText },
   { href: '/admin/products', label: 'Productos', icon: Package },
   { href: '/admin/categories', label: 'Categorías', icon: FolderTree },
   { href: '/admin/orders', label: 'Pedidos', icon: ShoppingCart },
@@ -28,26 +30,55 @@ export function AdminSidebar() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [storeName, setStoreName] = useState('Cargando...')
+  const [pendingQuotations, setPendingQuotations] = useState(0)
 
   useEffect(() => {
-    async function getStoreName() {
+    async function loadData() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (user) {
+        // Get Store Name
+        let storeId = null;
+
         const { data: store } = await supabase
           .from('stores')
-          .select('name')
+          .select('id, name')
           .eq('user_id', user.id)
           .single()
 
         if (store) {
           setStoreName(store.name)
+          storeId = store.id
+        } else {
+          // Try getting store from staff table if not owner
+          const { data: staff } = await supabase
+            .from('store_staff')
+            .select('store_id, stores(name)')
+            .eq('user_id', user.id)
+            .single()
+
+          if (staff && staff.stores) {
+            // @ts-ignore
+            setStoreName(staff.stores.name)
+            storeId = staff.store_id
+          }
+        }
+
+        if (storeId) {
+          // Count Pending Quotations
+          const { count } = await supabase
+            .from('quotations')
+            .select('*', { count: 'exact', head: true })
+            .eq('store_id', storeId)
+            .eq('status', 'pending')
+
+          setPendingQuotations(count || 0)
         }
       }
     }
 
-    getStoreName()
+    loadData()
   }, [])
 
   return (
@@ -87,18 +118,27 @@ export function AdminSidebar() {
           <nav className="flex-1 p-4 space-y-2">
             {menuItems.map((item) => {
               const isActive = pathname === item.href
+              const showBadge = item.label === 'Cotizaciones' && pendingQuotations > 0
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   prefetch={true}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                      ? 'bg-white text-black'
-                      : 'text-gray-300 hover:bg-gray-800'
+                  className={`flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${isActive
+                    ? 'bg-white text-black'
+                    : 'text-gray-300 hover:bg-gray-800'
                     }`}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  {showBadge && (
+                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {pendingQuotations}
+                    </span>
+                  )}
                 </Link>
               )
             })}

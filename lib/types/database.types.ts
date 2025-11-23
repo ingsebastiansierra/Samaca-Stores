@@ -10,6 +10,7 @@ export interface Product {
   stock: number
   status: 'available' | 'low_stock' | 'out_of_stock'
   tags?: string[]
+  store_id?: string
   created_at: string
   updated_at: string
 }

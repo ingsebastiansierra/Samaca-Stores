@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/hooks/useCart';
 import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, clear, getTotal, getStoreGroups } = useCart();
+  const { items, clear, getTotal, getStoreGroups, updateQuantity, removeItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -27,9 +27,20 @@ export default function CheckoutPage() {
   const storeGroups = getStoreGroups();
   const storeCount = Object.keys(storeGroups).length;
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     checkAuth();
   }, []);
+
+  if (!mounted || checkingAuth) {
+    return (
+      <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
   async function checkAuth() {
     const {
@@ -95,14 +106,6 @@ export default function CheckoutPage() {
     }
   }
 
-  if (checkingAuth) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-      </div>
-    );
-  }
-
   if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -120,11 +123,11 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl pt-24">
       {/* Header */}
       <div className="mb-8">
         <Link href="/carrito">
-          <Button variant="ghost" size="sm" className="mb-4">
+          <Button variant="ghost" size="sm" className="mb-4 text-gray-700 hover:text-sky-600 hover:bg-gray-100">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver al carrito
           </Button>
@@ -207,7 +210,7 @@ export default function CheckoutPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full mt-6"
+              className="w-full mt-6 bg-sky-600 hover:bg-sky-700 text-white"
               size="lg"
             >
               {loading ? (
@@ -241,8 +244,8 @@ export default function CheckoutPage() {
                     <h3 className="font-semibold mb-3">{store?.name}</h3>
                     <div className="space-y-2">
                       {storeItems.map((item) => (
-                        <div key={item.id} className="flex gap-3 text-sm">
-                          <div className="relative h-12 w-12 flex-shrink-0 rounded bg-gray-100">
+                        <div key={item.id} className="flex gap-3 text-sm py-2 border-b last:border-0">
+                          <div className="relative h-16 w-16 flex-shrink-0 rounded bg-gray-100">
                             {item.product.images?.[0] && (
                               <Image
                                 src={item.product.images[0]}
@@ -252,20 +255,51 @@ export default function CheckoutPage() {
                               />
                             )}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate">
-                              {item.product.name}
-                            </p>
-                            <p className="text-gray-600">
-                              {item.size && `Talla ${item.size}`}
-                              {item.size && item.color && ' • '}
-                              {item.color && item.color}
-                              {' • '}x{item.quantity}
-                            </p>
+                          <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                              <p className="font-medium truncate">
+                                {item.product.name}
+                              </p>
+                              <p className="text-gray-600 text-xs">
+                                {item.size && `Talla: ${item.size}`}
+                                {item.size && item.color && ' • '}
+                                {item.color && `Color: ${item.color}`}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-1">
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                                className="h-6 w-6 flex items-center justify-center rounded border border-gray-300 hover:bg-gray-100 text-gray-700"
+                              >
+                                -
+                              </button>
+                              <span className="w-6 text-center font-medium text-gray-900 text-xs">
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="h-6 w-6 flex items-center justify-center rounded border border-gray-300 hover:bg-gray-100 text-gray-700"
+                              >
+                                +
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => removeItem(item.id)}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">
                               ${(item.product.price * item.quantity).toLocaleString()}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              ${item.product.price.toLocaleString()} c/u
                             </p>
                           </div>
                         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, LogOut, Store, ShoppingBag, Settings } from 'lucide-react'
+import { User, LogOut, Store, ShoppingBag, Settings, FileText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getCurrentUser, signOut } from '@/lib/auth/auth-helpers'
 import toast from 'react-hot-toast'
@@ -122,13 +122,24 @@ export function UserMenu() {
                 </Link>
 
                 <Link
-                  href="/admin/dashboard"
+                  href="/perfil/cotizaciones"
                   onClick={() => setIsOpen(false)}
                   className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
                 >
-                  <Store className="w-5 h-5" />
-                  <span>Panel Admin</span>
+                  <FileText className="w-5 h-5" />
+                  <span>Mis Cotizaciones</span>
                 </Link>
+
+                {user.user_metadata?.role !== 'customer' && (
+                  <Link
+                    href="/admin/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-100 transition-colors text-left"
+                  >
+                    <Store className="w-5 h-5" />
+                    <span>Panel Admin</span>
+                  </Link>
+                )}
 
                 <Link
                   href="/configuracion"
