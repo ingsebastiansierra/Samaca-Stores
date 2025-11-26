@@ -1,11 +1,10 @@
 'use client'
 
-'use client'
-
 import { usePathname } from 'next/navigation'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { WhatsAppButton } from './WhatsAppButton'
+import { Breadcrumbs } from './Breadcrumbs'
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
@@ -20,6 +19,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             <Navbar />
+            <Breadcrumbs />
             <main className="min-h-screen relative z-10">
                 {children}
             </main>

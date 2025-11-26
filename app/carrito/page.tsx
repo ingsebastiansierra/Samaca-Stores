@@ -17,17 +17,17 @@ export default function CarritoPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl min-h-screen pt-24">
+    <div className="container mx-auto px-4 sm:px-6 py-8 max-w-4xl min-h-screen pt-28">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <Link href="/catalogo">
-          <Button variant="ghost" size="sm" className="mb-4 text-gray-700 hover:text-sky-600">
+          <Button variant="ghost" size="sm" className="mb-4 text-gray-700 hover:text-sky-600 -ml-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Seguir comprando
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">Tu Carrito</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Tu Carrito</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
           Revisa tus productos antes de cotizar
         </p>
       </div>

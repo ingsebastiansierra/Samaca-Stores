@@ -9,13 +9,14 @@ import Link from 'next/link'
 interface ProductsClientProps {
     initialProducts: any[]
     storeId: string
+    categories: Array<{ id: string; name: string }>
 }
 
-export function ProductsClient({ initialProducts, storeId }: ProductsClientProps) {
+export function ProductsClient({ initialProducts, storeId, categories }: ProductsClientProps) {
     const [products, setProducts] = useState(initialProducts)
 
     return (
-        <div className="space-y-6 p-4 md:p-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-black">Productos</h1>
@@ -31,7 +32,7 @@ export function ProductsClient({ initialProducts, storeId }: ProductsClientProps
 
             <ProductsFilters storeId={storeId} onProductsChange={setProducts} />
 
-            <ProductsTable products={products} />
+            <ProductsTable products={products} categories={categories} />
         </div>
     )
 }

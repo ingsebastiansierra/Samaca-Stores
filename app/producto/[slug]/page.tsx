@@ -128,17 +128,17 @@ export default function ProductoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-deep-black flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-neon-blue" />
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-sky-600" />
       </div>
     )
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-deep-black flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Producto no encontrado</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Producto no encontrado</h2>
           <Button onClick={() => router.push('/catalogo')} variant="neon">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Catálogo
@@ -149,23 +149,23 @@ export default function ProductoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-deep-black pt-20">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 pt-32 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <button
           onClick={() => router.push('/catalogo')}
-          className="flex items-center text-gray-400 hover:text-neon-blue transition-colors mb-8 group"
+          className="flex items-center text-gray-600 hover:text-sky-600 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Volver al catálogo
         </button>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Images Section */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-white border border-gray-200 shadow-2xl"
+              className="relative aspect-square lg:aspect-[4/5] rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-lg"
             >
               <AnimatePresence mode="wait">
                 <motion.div
@@ -180,50 +180,53 @@ export default function ProductoPage() {
                     src={product.images[selectedImage] || '/placeholder.jpg'}
                     alt={product.name}
                     fill
-                    className="object-contain p-8 drop-shadow-xl mix-blend-multiply"
+                    className="object-contain p-6 md:p-8 drop-shadow-xl mix-blend-multiply"
                     priority
                   />
                 </motion.div>
               </AnimatePresence>
 
               {/* Badges */}
-              <div className="absolute top-6 left-6 flex flex-col gap-2 z-10">
+              <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 {product.status === 'out_of_stock' && (
                   <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg">AGOTADO</span>
                 )}
                 {product.tags?.includes('nuevo') && (
-                  <span className="px-3 py-1 bg-neon-blue text-black text-xs font-bold rounded-full shadow-lg">NUEVO</span>
+                  <span className="px-3 py-1 bg-sky-600 text-white text-xs font-bold rounded-full shadow-lg flex items-center gap-1">
+                    <Zap className="w-3 h-3 fill-current" />
+                    NUEVO
+                  </span>
                 )}
               </div>
 
               {/* Actions */}
-              <div className="absolute top-6 right-6 flex flex-col gap-3 z-10">
-                <button className="p-3 bg-white border border-gray-200 rounded-full text-gray-700 hover:bg-neon-purple hover:text-white hover:border-neon-purple transition-colors shadow-lg">
-                  <Heart className="w-5 h-5" />
+              <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                <button className="p-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full text-gray-700 hover:bg-pink-500 hover:text-white hover:border-pink-500 transition-colors shadow-lg">
+                  <Heart className="w-4 h-4" />
                 </button>
-                <button className="p-3 bg-white border border-gray-200 rounded-full text-gray-700 hover:bg-neon-blue hover:text-black hover:border-neon-blue transition-colors shadow-lg">
-                  <Share2 className="w-5 h-5" />
+                <button className="p-2.5 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full text-gray-700 hover:bg-sky-600 hover:text-white hover:border-sky-600 transition-colors shadow-lg">
+                  <Share2 className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
 
             {/* Thumbnails */}
             {product.images.length > 1 && (
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                 {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`relative w-24 aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${selectedImage === index
-                      ? 'border-neon-blue shadow-[0_0_10px_rgba(0,243,255,0.3)]'
-                      : 'border-transparent opacity-50 hover:opacity-100'
+                    className={`relative w-20 aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 bg-white ${selectedImage === index
+                      ? 'border-sky-600 shadow-md scale-105'
+                      : 'border-gray-200 opacity-60 hover:opacity-100'
                       }`}
                   >
                     <Image
                       src={image}
                       alt={`${product.name} ${index + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain p-2"
                     />
                   </button>
                 ))}
@@ -232,52 +235,54 @@ export default function ProductoPage() {
           </div>
 
           {/* Product Info */}
-          <div className="lg:sticky lg:top-24 h-fit space-y-8">
+          <div className="lg:sticky lg:top-32 h-fit space-y-6">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-mono text-neon-blue border border-neon-blue/20">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-3 py-1 bg-sky-50 rounded-full text-xs font-semibold text-sky-700 border border-sky-200">
                   {product.category?.toUpperCase() || 'GENERAL'}
                 </span>
-                <div className="flex items-center gap-1 text-xs text-neon-lime">
-                  <Zap className="w-3 h-3" />
-                  <span>En stock: {product.stock}</span>
-                </div>
+                {product.stock > 0 && (
+                  <div className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
+                    <Zap className="w-3 h-3" />
+                    <span className="font-semibold">Stock: {product.stock}</span>
+                  </div>
+                )}
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4 leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4 leading-tight">
                 {product.name}
               </h1>
 
-              <div className="flex items-baseline gap-4">
-                <span className="text-4xl font-bold text-white">
+              <div className="flex items-baseline gap-3 mb-4">
+                <span className="text-3xl md:text-4xl font-bold text-gray-900">
                   ${product.price.toLocaleString('es-CO')}
                 </span>
                 {product.price > 0 && (
-                  <span className="text-lg text-gray-500 line-through">
+                  <span className="text-lg text-gray-400 line-through">
                     ${(product.price * 1.2).toLocaleString('es-CO')}
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="prose prose-invert max-w-none text-gray-400 leading-relaxed">
+            <div className="text-gray-600 leading-relaxed text-base">
               <p>{product.description}</p>
             </div>
 
             {/* Configuration */}
-            <div className="space-y-6 p-6 bg-white/5 rounded-3xl border border-white/10">
+            <div className="space-y-5 p-5 md:p-6 bg-white rounded-2xl border border-gray-200 shadow-sm">
               {/* Sizes */}
               {product.sizes && product.sizes.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-3">TALLA</label>
-                  <div className="flex flex-wrap gap-3">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Talla</label>
+                  <div className="flex flex-wrap gap-2">
                     {product.sizes.map(size => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-[3rem] h-12 px-4 rounded-xl font-medium transition-all ${selectedSize === size
-                          ? 'bg-neon-blue text-black shadow-[0_0_15px_rgba(0,243,255,0.4)]'
-                          : 'bg-black/50 text-gray-400 hover:bg-white/10 border border-white/10'
+                        className={`min-w-[3rem] h-11 px-4 rounded-lg font-semibold transition-all ${selectedSize === size
+                          ? 'bg-sky-600 text-white shadow-md scale-105'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                           }`}
                       >
                         {size}
@@ -290,15 +295,15 @@ export default function ProductoPage() {
               {/* Colors */}
               {product.colors && product.colors.length > 0 && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-3">COLOR</label>
-                  <div className="flex flex-wrap gap-3">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Color</label>
+                  <div className="flex flex-wrap gap-2">
                     {product.colors.map(color => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`px-6 py-3 rounded-xl font-medium transition-all ${selectedColor === color
-                          ? 'bg-neon-purple text-white shadow-[0_0_15px_rgba(188,19,254,0.4)]'
-                          : 'bg-black/50 text-gray-400 hover:bg-white/10 border border-white/10'
+                        className={`px-5 py-2.5 rounded-lg font-semibold transition-all ${selectedColor === color
+                          ? 'bg-gray-900 text-white shadow-md scale-105'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                           }`}
                       >
                         {color}
@@ -310,18 +315,18 @@ export default function ProductoPage() {
 
               {/* Quantity */}
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-3">CANTIDAD</label>
-                <div className="flex items-center gap-4 bg-black/50 w-fit p-1 rounded-xl border border-white/10">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">Cantidad</label>
+                <div className="flex items-center gap-3 bg-gray-100 w-fit p-1 rounded-lg border border-gray-300">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 rounded-lg hover:bg-white/10 text-white transition-colors flex items-center justify-center text-xl"
+                    className="w-10 h-10 rounded-md hover:bg-gray-200 text-gray-700 transition-colors flex items-center justify-center text-xl font-bold"
                   >
                     -
                   </button>
-                  <span className="w-12 text-center text-white font-bold">{quantity}</span>
+                  <span className="w-12 text-center text-gray-900 font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                    className="w-10 h-10 rounded-lg hover:bg-white/10 text-white transition-colors flex items-center justify-center text-xl"
+                    className="w-10 h-10 rounded-md hover:bg-gray-200 text-gray-700 transition-colors flex items-center justify-center text-xl font-bold"
                   >
                     +
                   </button>
@@ -330,23 +335,24 @@ export default function ProductoPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-col gap-3 pt-2">
               <Button
                 size="lg"
                 onClick={handleAddToCart}
                 disabled={product.status === 'out_of_stock'}
-                className="flex-1 h-14 text-lg bg-neon-blue text-black hover:bg-neon-blue/90 hover:shadow-[0_0_20px_rgba(0,243,255,0.4)] border-none"
+                className="w-full !h-16 text-base sm:text-lg font-bold bg-sky-600 text-white hover:bg-sky-700 shadow-md hover:shadow-lg border-none"
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                AGREGAR AL CARRITO
+                Agregar al Carrito
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 onClick={handleWhatsApp}
-                className="h-14 w-14 p-0 rounded-xl border-white/20 hover:border-neon-lime hover:text-neon-lime hover:bg-neon-lime/10"
+                className="w-full !h-16 rounded-xl border-2 border-gray-300 hover:border-green-500 hover:text-green-600 hover:bg-green-50 text-gray-700 font-bold"
               >
-                <MessageCircle className="w-6 h-6" />
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Consultar por WhatsApp
               </Button>
             </div>
           </div>

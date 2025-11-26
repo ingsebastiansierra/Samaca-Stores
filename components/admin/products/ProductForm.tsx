@@ -73,7 +73,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         await createProduct(data)
         toast.success('Producto creado')
       }
-      
+
       router.push('/admin/products')
       router.refresh()
     } catch (error: any) {
@@ -105,11 +105,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-black mb-4">Información Básica</h2>
-        
-        <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-bold text-black mb-3 sm:mb-4">Información Básica</h2>
+
+        <div className="space-y-3 sm:space-y-4">
           {/* Name */}
           <div>
             <label className="block text-sm font-bold text-black mb-2">
@@ -161,7 +161,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           </div>
 
           {/* Price & Stock */}
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-bold text-black mb-2">
                 Precio *
@@ -173,7 +173,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 step="100"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-base"
                 placeholder="0"
               />
             </div>
@@ -187,7 +187,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 min="0"
                 value={formData.stock}
                 onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                className="w-full px-3 sm:px-4 py-2 sm:py-2.5 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-base"
                 placeholder="0"
               />
             </div>
@@ -212,7 +212,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       {/* Images */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-black mb-4">Imágenes</h2>
-        
+
         <div className="space-y-4">
           <div className="flex gap-2">
             <input
@@ -247,11 +247,11 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* Sizes & Colors */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Sizes */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-lg font-bold text-black mb-4">Tallas</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold text-black mb-3 sm:mb-4">Tallas</h2>
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -284,9 +284,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         </div>
 
         {/* Colors */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-lg font-bold text-black mb-4">Colores</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <h2 className="text-base sm:text-lg font-bold text-black mb-3 sm:mb-4">Colores</h2>
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -320,8 +320,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* Settings */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-bold text-black mb-4">Configuración</h2>
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-bold text-black mb-3 sm:mb-4">Configuración</h2>
         <div className="space-y-3">
           <label className="flex items-center gap-3">
             <input
@@ -345,10 +345,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pb-24 lg:pb-8">
         <Link
           href="/admin/products"
-          className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-colors"
+          className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 border-2 border-gray-200 rounded-lg hover:border-black transition-colors font-medium text-sm sm:text-base"
         >
           <ArrowLeft className="w-4 h-4" />
           Cancelar
@@ -356,7 +356,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         <Button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-black text-white hover:bg-gray-800"
+          className="flex-1 bg-black text-white hover:bg-gray-800 !h-12 font-semibold text-sm sm:text-base"
         >
           {loading ? 'Guardando...' : product ? 'Actualizar Producto' : 'Crear Producto'}
         </Button>

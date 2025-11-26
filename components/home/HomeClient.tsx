@@ -23,16 +23,16 @@ export function HomeClient() {
   }
 
   return (
-    <div className="min-h-screen bg-deep-black">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
       <HeroSection />
 
       {/* Search & Categories */}
-      <section className="relative z-10 mt-0 pb-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+      <section className="relative z-10 mt-0 pb-8 sm:pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white border border-gray-200 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 shadow-lg">
             <SearchBar onSearch={handleSearch} />
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               <CategoriesGrid
                 onCategorySelect={handleCategorySelect}
                 selectedCategory={selectedCategory}
@@ -43,8 +43,8 @@ export function HomeClient() {
       </section>
 
       {/* Grid de productos */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-8 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <ProductsGrid
             searchQuery={searchQuery}
             category={selectedCategory}
@@ -54,7 +54,7 @@ export function HomeClient() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-20 bg-black border-t border-white/10">
+      <section className="py-20 bg-white border-t border-gray-200">
         <Newsletter />
       </section>
     </div>

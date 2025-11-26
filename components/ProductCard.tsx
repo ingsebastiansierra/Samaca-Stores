@@ -88,22 +88,22 @@ export function ProductCard({ product }: ProductCardProps) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ y: -10 }}
-      transition={{ duration: 0.4 }}
-      className="group relative"
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3 }}
+      className="group relative w-full max-w-[270px] mx-auto"
     >
       {/* Card Container - White Neomorphism */}
-      <div className="relative h-[450px] bg-white rounded-[2rem] overflow-visible transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] border border-gray-100 flex flex-col">
+      <div className="relative h-[380px] w-full bg-white rounded-2xl overflow-visible transition-all duration-500 hover:shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15)] border border-gray-300 flex flex-col">
 
         {/* Main Link covering the card (except button) */}
-        <Link href={productUrl} className="absolute inset-0 z-0 rounded-[2rem]" />
+        <Link href={productUrl} className="absolute inset-0 z-0 rounded-2xl" />
 
         {/* Store Badge */}
         {product.store && (
-          <div className="absolute top-4 left-4 z-20 pointer-events-none">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-black/5 backdrop-blur-sm rounded-full border border-black/5">
-              <Store className="w-3 h-3 text-gray-600" />
-              <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">
+          <div className="absolute top-3 left-3 z-20 pointer-events-none">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-black/5 backdrop-blur-sm rounded-full border border-black/5">
+              <Store className="w-2.5 h-2.5 text-gray-600" />
+              <span className="text-[9px] font-bold text-gray-600 uppercase tracking-wider">
                 {product.store.name}
               </span>
             </div>
@@ -111,61 +111,60 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* New Badge */}
-        <div className="absolute top-4 right-4 z-20 pointer-events-none">
-          <div className="flex items-center gap-1 px-3 py-1.5 bg-neon-blue text-black rounded-full shadow-lg shadow-neon-blue/20">
-            <Zap className="w-3 h-3 fill-current" />
-            <span className="text-[10px] font-bold uppercase tracking-wider">NEW</span>
+        <div className="absolute top-3 right-3 z-20 pointer-events-none">
+          <div className="flex items-center gap-1 px-2.5 py-1 bg-sky-600 text-white rounded-full shadow-md">
+            <Zap className="w-2.5 h-2.5 fill-current" />
+            <span className="text-[9px] font-bold uppercase tracking-wider">NEW</span>
           </div>
         </div>
 
         {/* Image Area - Floating Effect */}
-        <div className="relative h-[60%] w-full p-6 flex items-center justify-center bg-gradient-to-b from-gray-50 to-white rounded-t-[2rem] pointer-events-none">
-          <div className="relative w-full h-full transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-3">
+        <div className="relative h-[58%] w-full p-4 flex items-center justify-center bg-gradient-to-b from-gray-50 to-white rounded-t-2xl pointer-events-none">
+          <div className="relative w-full h-full transition-transform duration-500 group-hover:scale-105">
             <Image
               src={displayImage}
               alt={product.name}
               fill
-              sizes="(max-width: 768px) 100vw, 25vw"
-              className="object-contain drop-shadow-xl mix-blend-multiply"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-contain drop-shadow-lg mix-blend-multiply"
             />
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="relative h-[40%] bg-white p-6 rounded-b-[2rem] flex flex-col justify-between z-10">
+        <div className="relative h-[42%] bg-white p-4 rounded-b-2xl flex flex-col justify-between z-10">
           <div className="pointer-events-none">
-            <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 mb-1 group-hover:text-neon-blue transition-colors">
+            <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2 mb-1 group-hover:text-sky-600 transition-colors">
               {product.name}
             </h3>
-            <div className="flex items-center gap-1 mb-2">
+            <div className="flex items-center gap-0.5 mb-1.5">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-3 h-3 text-yellow-400 fill-current" />
+                <Star key={star} className="w-2.5 h-2.5 text-yellow-400 fill-current" />
               ))}
-              <span className="text-xs text-gray-400 ml-1">(4.8)</span>
+              <span className="text-[10px] text-gray-500 ml-1">(4.8)</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between mt-1">
             <div className="pointer-events-none">
-              <p className="text-xs text-gray-400 uppercase tracking-wider font-medium mb-0.5">Precio</p>
+              <p className="text-[10px] text-gray-500 uppercase tracking-wider font-medium mb-0.5">Precio</p>
               <div className="flex flex-col">
-                <p className="text-xl font-bold text-black font-display">
+                <p className="text-lg font-bold text-gray-900 font-display">
                   ${product.price.toLocaleString('es-CO')}
                 </p>
-                {/* Simulated compare price for visual impact if not present */}
-                <p className="text-xs text-gray-400 line-through">
+                <p className="text-[10px] text-gray-500 line-through">
                   ${(product.price * 1.2).toLocaleString('es-CO')}
                 </p>
               </div>
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={handleAddToCart}
-              className="relative z-30 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-neon-blue hover:text-black transition-colors duration-300 cursor-pointer"
+              className="relative z-30 w-10 h-10 bg-black text-white rounded-full flex items-center justify-center shadow-md hover:bg-sky-600 transition-colors duration-300 cursor-pointer"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-4 h-4" />
             </motion.button>
           </div>
         </div>

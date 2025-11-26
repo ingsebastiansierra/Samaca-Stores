@@ -16,10 +16,40 @@ export function AdminHeader() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [pendingCount, setPendingCount] = useState(0)
   const [recentQuotations, setRecentQuotations] = useState<any[]>([])
+  const [storeName, setStoreName] = useState<string>('')
 
   useEffect(() => {
     checkNotifications()
+    loadStoreName()
   }, [])
+
+  async function loadStoreName() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    // Get store name
+    const { data: store } = await supabase
+      .from('stores')
+      .select('name')
+      .eq('user_id', user.id)
+      .single()
+
+    if (store) {
+      setStoreName(store.name)
+    } else {
+      // Check if user is staff
+      const { data: staff } = await supabase
+        .from('store_staff')
+        .select('stores(name)')
+        .eq('user_id', user.id)
+        .single()
+
+      if (staff && staff.stores) {
+        setStoreName((staff.stores as any).name)
+      }
+    }
+  }
 
   async function checkNotifications() {
     const supabase = createClient()
@@ -90,7 +120,23 @@ export function AdminHeader() {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
       <div className="px-4 md:px-8 py-4 flex items-center justify-between">
-        <div className="flex-1" />
+        {/* Store Name */}
+        <div className="flex-1">
+          {storeName && (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-sky-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">{storeName.charAt(0).toUpperCase()}</span>
+              </div>
+              <div className="hidden sm:block">
+                <h2 className="text-sm font-bold text-gray-900 truncate max-w-[200px]">{storeName}</h2>
+                <p className="text-xs text-gray-500">Panel de administración</p>
+              </div>
+              <div className="sm:hidden">
+                <h2 className="text-sm font-bold text-gray-900 truncate max-w-[120px]">{storeName}</h2>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-2 md:gap-4">
           {/* Notifications */}

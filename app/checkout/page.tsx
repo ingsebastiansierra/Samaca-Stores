@@ -21,7 +21,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.name || !formData.phone) {
       toast.error('Por favor completa todos los campos requeridos')
       return
@@ -31,7 +31,7 @@ export default function CheckoutPage() {
 
     try {
       const ticket = generateTicket()
-      
+
       // Here you would save to Supabase
       // await createOrder({ ticket, ...formData, items, total: getTotalPrice() })
 
@@ -39,8 +39,8 @@ export default function CheckoutPage() {
       const firstItem = items[0]
       const message = createOrderMessage({
         ticket,
-        productName: items.length > 1 
-          ? `${firstItem.name} y ${items.length - 1} más` 
+        productName: items.length > 1
+          ? `${firstItem.name} y ${items.length - 1} más`
           : firstItem.name,
         size: firstItem.size,
         quantity: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -53,7 +53,7 @@ export default function CheckoutPage() {
       // Clear cart and redirect
       clearCart()
       toast.success('¡Pedido creado exitosamente!')
-      
+
       setTimeout(() => {
         router.push(`/pedido/${ticket}`)
       }, 1000)
@@ -71,21 +71,21 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pt-28">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-4xl font-bold mb-8">Finalizar Pedido</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8">Finalizar Pedido</h1>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           {/* Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-6">Información de Contacto</h2>
-            
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-6">Información de Contacto</h2>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
                   Nombre Completo *
                 </label>
                 <input
@@ -93,13 +93,13 @@ export default function CheckoutPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 text-base"
                   placeholder="Juan Pérez"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
                   Teléfono / WhatsApp *
                 </label>
                 <input
@@ -107,20 +107,20 @@ export default function CheckoutPage() {
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 text-base"
                   placeholder="300 123 4567"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
                   Email (Opcional)
                 </label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 text-base"
                   placeholder="correo@ejemplo.com"
                 />
               </div>
@@ -128,7 +128,7 @@ export default function CheckoutPage() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full"
+                className="w-full h-14 text-base font-semibold bg-sky-600 hover:bg-sky-700"
                 isLoading={isProcessing}
               >
                 Confirmar Pedido por WhatsApp
@@ -137,19 +137,19 @@ export default function CheckoutPage() {
           </div>
 
           {/* Summary */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-6">Resumen del Pedido</h2>
-            
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-5 sm:mb-6">Resumen del Pedido</h2>
+
             <div className="space-y-4 mb-6">
               {items.map(item => (
-                <div key={item.id} className="flex justify-between">
-                  <div>
-                    <p className="font-medium">{item.name}</p>
+                <div key={item.id} className="flex justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 truncate">{item.name}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Cantidad: {item.quantity}
                     </p>
                   </div>
-                  <p className="font-semibold">
+                  <p className="font-bold text-gray-900 whitespace-nowrap">
                     ${(item.price * item.quantity).toLocaleString('es-CO')}
                   </p>
                 </div>
@@ -157,16 +157,16 @@ export default function CheckoutPage() {
             </div>
 
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <div className="flex justify-between text-xl font-bold mb-4">
+              <div className="flex justify-between text-lg sm:text-xl font-bold mb-4">
                 <span>Total</span>
-                <span className="text-primary-600">
+                <span className="text-sky-600">
                   ${getTotalPrice().toLocaleString('es-CO')}
                 </span>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                  📱 Al confirmar, se abrirá WhatsApp con tu pedido pre-cargado. 
+              <div className="bg-sky-50 dark:bg-blue-900/20 rounded-lg p-4">
+                <p className="text-sm text-sky-800 dark:text-blue-300 leading-relaxed">
+                  📱 Al confirmar, se abrirá WhatsApp con tu pedido pre-cargado.
                   Recibirás un ticket único para hacer seguimiento.
                 </p>
               </div>

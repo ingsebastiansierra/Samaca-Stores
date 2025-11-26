@@ -35,5 +35,5 @@ export default async function ProductsPage() {
     categories: categories?.find(cat => cat.id === product.category_id) || null
   }))
 
-  return <ProductsClient initialProducts={productsWithCategories || []} storeId={store.id} />
+  return <ProductsClient initialProducts={productsWithCategories || []} storeId={store.id} categories={categories || []} />
 }

@@ -26,11 +26,10 @@ interface Product {
 
 interface ProductsTableProps {
   products: Product[]
-  storeId: string
   categories: Array<{ id: string; name: string }>
 }
 
-export function ProductsTable({ products, storeId, categories }: ProductsTableProps) {
+export function ProductsTable({ products, categories }: ProductsTableProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 
@@ -123,22 +122,20 @@ export function ProductsTable({ products, storeId, categories }: ProductsTablePr
                   ${product.price.toLocaleString('es-CO')}
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    product.stock === 0
-                      ? 'bg-red-100 text-red-800'
-                      : product.stock <= 5
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.stock === 0
+                    ? 'bg-red-100 text-red-800'
+                    : product.stock <= 5
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-green-100 text-green-800'
-                  }`}>
+                    }`}>
                     {product.stock} unidades
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    product.is_active
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.is_active
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-800'
+                    }`}>
                     {product.is_active ? 'Activo' : 'Inactivo'}
                   </span>
                 </td>
