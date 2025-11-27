@@ -9,9 +9,10 @@ import { Breadcrumbs } from './Breadcrumbs'
 export function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
     const isAdminRoute = pathname?.startsWith('/admin')
+    const isSuperAdminRoute = pathname?.startsWith('/super-admin')
 
-    if (isAdminRoute) {
-        // Admin routes: no Navbar, no Footer, no WhatsAppButton, no main wrapper
+    if (isAdminRoute || isSuperAdminRoute) {
+        // Admin and Super Admin routes: no Navbar, no Footer, no WhatsAppButton, no main wrapper
         return <>{children}</>
     }
 

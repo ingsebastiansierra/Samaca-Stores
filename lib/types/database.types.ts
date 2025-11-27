@@ -25,6 +25,7 @@ export interface Order {
   items: OrderItem[]
   total: number
   status: 'pending' | 'reserved' | 'shipped' | 'delivered' | 'cancelled'
+  store_id?: string
   created_at: string
   updated_at: string
 }
@@ -59,4 +60,65 @@ export interface InventoryLog {
   quantity: number
   reason: string
   created_at: string
+}
+
+export interface Store {
+  id: string
+  user_id: string
+  name: string
+  description?: string
+  address?: string
+  city: string
+  phone?: string
+  whatsapp?: string
+  email?: string
+  status: 'active' | 'inactive' | 'closed'
+  total_sales: number
+  total_orders: number
+  created_at: string
+  updated_at: string
+}
+
+export interface UserProfile {
+  id: string
+  user_id: string
+  email: string
+  full_name: string
+  role: 'super_admin' | 'store_admin' | 'user'
+  profession?: string
+  phone?: string
+  preferred_stores?: string[]
+  created_at: string
+  updated_at: string
+}
+
+export interface ActivityLog {
+  id: string
+  user_id?: string
+  store_id?: string
+  action: string
+  entity_type: string
+  entity_id?: string
+  details?: Record<string, any>
+  created_at: string
+}
+
+export interface StoreStats {
+  id: string
+  store_id: string
+  total_products: number
+  total_orders: number
+  total_revenue: number
+  total_customers: number
+  avg_order_value: number
+  last_order_date?: string
+  updated_at: string
+}
+
+export interface StoreWithStats extends Store {
+  stats?: StoreStats
+  admin?: {
+    email: string
+    full_name: string
+  }
 }

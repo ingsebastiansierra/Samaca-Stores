@@ -48,6 +48,57 @@ export async function signIn(data: SignInData) {
   return authData
 }
 
+// Obtener rol del usuario desde user_profiles
+export async function getUserRole(userId: string): Promise<string> {
+  const supabase = createClient()
+  
+  console.log('🔍 [getUserRole] Buscando rol para usuario:', userId)
+  
+  try {
+    // Primero intentar obtener el perfil
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (profileError) {
+      console.error('❌ [getUserRole] Error al buscar perfil:', profileError)
+      throw profileError
+    }
+
+    if (profile && profile.role) {
+      console.log('✅ [getUserRole] Rol encontrado en user_profiles:', profile.role)
+      return profile.role
+    }
+
+    console.log('⚠️ [getUserRole] No se encontró perfil, verificando si tiene tienda...')
+    
+    // Si no existe el perfil, verificar si tiene tienda (es store_admin)
+    const { data: store, error: storeError } = await supabase
+      .from('stores')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (storeError) {
+      console.error('❌ [getUserRole] Error al buscar tienda:', storeError)
+    }
+
+    if (store) {
+      console.log('✅ [getUserRole] Tiene tienda, rol: store_admin')
+      return 'store_admin'
+    }
+
+    console.log('ℹ️ [getUserRole] No tiene perfil ni tienda, rol: user')
+    return 'user'
+    
+  } catch (error) {
+    console.error('❌ [getUserRole] Error general:', error)
+    return 'user'
+  }
+}
+
 // Cerrar sesión
 export async function signOut() {
   const supabase = createClient()
@@ -153,8 +204,8 @@ export async function createStore(userId: string, storeData: {
   return data
 }
 
-// Obtener rol del usuario (para el UserMenu)
-export function getUserRole(user: any): string {
+// Obtener rol del usuario (para el UserMenu) - versión síncrona
+export function getUserRoleSync(user: any): string {
   // Por ahora retornamos 'customer' por defecto
   // Esto se puede expandir para verificar si tiene tienda
   return user?.user_metadata?.role || 'customer'

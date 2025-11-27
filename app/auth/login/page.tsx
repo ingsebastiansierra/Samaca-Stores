@@ -37,13 +37,56 @@ export default function LoginPage() {
         throw new Error('No se pudo crear la sesión')
       }
 
-      toast.success('¡Bienvenido!')
+      console.log('✅ Login exitoso, usuario:', result.user.email)
+      console.log('🔍 User ID:', result.user.id)
 
-      // Esperar un momento para que las cookies se guarden
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Verificar directamente en la base de datos
+      const supabase = (await import('@/lib/supabase/client')).createClient()
 
-      // Redirigir con window.location para forzar recarga completa
-      window.location.href = '/admin/dashboard'
+      console.log('🔍 Consultando user_profiles directamente...')
+      const { data: profileData, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('user_id', result.user.id)
+        .single()
+
+      console.log('📊 Resultado de user_profiles:', profileData)
+      console.log('❌ Error (si hay):', profileError)
+
+      // Obtener el rol del usuario
+      const { getUserRole } = await import('@/lib/auth/auth-helpers')
+
+      try {
+        const role = await getUserRole(result.user.id)
+        console.log('✅ Rol obtenido por getUserRole:', role)
+        console.log('✅ Rol del perfil directo:', profileData?.role)
+
+        // Redirigir según el rol INMEDIATAMENTE
+        if (role === 'super_admin') {
+          console.log('🚀🚀🚀 SUPER ADMIN DETECTADO 🚀🚀🚀')
+          console.log('🚀 Redirigiendo a: /super-admin/dashboard')
+          alert('SUPER ADMIN DETECTADO - Redirigiendo a /super-admin/dashboard')
+          window.location.href = '/super-admin/dashboard'
+          return
+        }
+
+        if (role === 'store_admin') {
+          console.log('🏪 STORE ADMIN DETECTADO')
+          console.log('🏪 Redirigiendo a: /admin/dashboard')
+          window.location.href = '/admin/dashboard'
+          return
+        }
+
+        // Usuario normal
+        console.log('👤 Usuario normal')
+        console.log('👤 Redirigiendo a: /')
+        window.location.href = '/'
+
+      } catch (roleError) {
+        console.error('❌ Error al obtener rol:', roleError)
+        toast.error('Error al obtener información del usuario')
+        setLoading(false)
+      }
     } catch (err: any) {
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {}
