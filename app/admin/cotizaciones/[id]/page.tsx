@@ -12,13 +12,15 @@ import {
     MapPin,
     MessageCircle,
     CheckCircle,
-    Loader2
+    Loader2,
+    FileEdit
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import toast from 'react-hot-toast';
+import { QuotationResponseForm } from '@/components/admin/quotations/QuotationResponseForm';
 
 export default function AdminQuotationDetailPage() {
     const params = useParams();
@@ -26,6 +28,7 @@ export default function AdminQuotationDetailPage() {
     const [quotation, setQuotation] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [converting, setConverting] = useState(false);
+    const [showResponseForm, setShowResponseForm] = useState(false);
     const supabase = createClient();
 
     useEffect(() => {
@@ -122,6 +125,16 @@ export default function AdminQuotationDetailPage() {
 
                     {/* Botones - Stack en móvil, fila en desktop */}
                     <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        {!isConverted && (
+                            <Button
+                                onClick={() => setShowResponseForm(true)}
+                                className="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white"
+                            >
+                                <FileEdit className="h-4 w-4 mr-2" />
+                                Responder Cotización
+                            </Button>
+                        )}
+
                         <a
                             href={`https://wa.me/${quotation.customer_phone}?text=Hola ${quotation.customer_name}, te escribo sobre tu cotización ${quotation.ticket}`}
                             target="_blank"
@@ -130,7 +143,7 @@ export default function AdminQuotationDetailPage() {
                         >
                             <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50">
                                 <MessageCircle className="h-4 w-4 mr-2" />
-                                WhatsApp Cliente
+                                WhatsApp Simple
                             </Button>
                         </a>
 
@@ -258,6 +271,18 @@ export default function AdminQuotationDetailPage() {
                     )}
                 </div>
             </div>
+
+            {/* Response Form Modal */}
+            {showResponseForm && (
+                <QuotationResponseForm
+                    quotation={quotation}
+                    onClose={() => setShowResponseForm(false)}
+                    onSuccess={() => {
+                        setShowResponseForm(false)
+                        loadQuotation()
+                    }}
+                />
+            )}
         </div>
     );
 }
