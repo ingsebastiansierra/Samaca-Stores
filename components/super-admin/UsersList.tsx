@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { updateUserRole } from '@/lib/actions/super-admin'
-import { User, Mail, Briefcase, Shield, ShieldCheck, UserCircle } from 'lucide-react'
+import { updateUserRole, toggleUserStatus } from '@/lib/actions/super-admin'
+import { User, Mail, Briefcase, Shield, ShieldCheck, UserCircle, Ban, CheckCircle } from 'lucide-react'
 import type { UserProfile } from '@/lib/types/database.types'
 import toast from 'react-hot-toast'
 
@@ -77,6 +77,46 @@ export default function UsersList({ users }: { users: UserProfile[] }) {
         }
     }
 
+    const handleToggleStatus = async (userId: string, currentStatus: boolean, userName: string) => {
+        const newStatus = !currentStatus
+        const action = newStatus ? 'habilitar' : 'deshabilitar'
+
+        // Primera confirmación
+        const confirmFirst = window.confirm(
+            `⚠️ ${action.toUpperCase()} USUARIO\n\n` +
+            `Usuario: ${userName}\n` +
+            `Estado actual: ${currentStatus ? 'Activo' : 'Inactivo'}\n` +
+            `Nuevo estado: ${newStatus ? 'Activo' : 'Inactivo'}\n\n` +
+            `¿Estás seguro de que quieres ${action} este usuario?`
+        )
+
+        if (!confirmFirst) return
+
+        // Segunda confirmación
+        const confirmSecond = window.confirm(
+            `🚨 CONFIRMACIÓN FINAL\n\n` +
+            `Esta acción ${newStatus ? 'HABILITARÁ' : 'DESHABILITARÁ'} a:\n` +
+            `${userName}\n\n` +
+            `${newStatus ? '✅ El usuario podrá iniciar sesión' : '❌ El usuario NO podrá iniciar sesión'}\n\n` +
+            `¿CONFIRMAS este cambio?`
+        )
+
+        if (!confirmSecond) return
+
+        setLoading(userId)
+        try {
+            await toggleUserStatus(userId, newStatus)
+            setUsersList(prev => prev.map(u =>
+                u.user_id === userId ? { ...u, is_active: newStatus } : u
+            ))
+            toast.success(`✅ Usuario ${newStatus ? 'habilitado' : 'deshabilitado'} correctamente`)
+        } catch (error) {
+            toast.error('❌ Error al cambiar el estado del usuario')
+        } finally {
+            setLoading(null)
+        }
+    }
+
     const getRoleIcon = (role: string) => {
         switch (role) {
             case 'super_admin': return <ShieldCheck className="w-5 h-5 text-red-500" />
@@ -115,6 +155,9 @@ export default function UsersList({ users }: { users: UserProfile[] }) {
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Profesión
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Fecha Registro
@@ -159,21 +202,57 @@ export default function UsersList({ users }: { users: UserProfile[] }) {
                                         <span className="text-sm text-gray-400">-</span>
                                     )}
                                 </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {user.is_active !== false ? (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <CheckCircle className="w-3 h-3 mr-1" />
+                                            Activo
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <Ban className="w-3 h-3 mr-1" />
+                                            Inactivo
+                                        </span>
+                                    )}
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                     {new Date(user.created_at).toLocaleDateString('es-ES')}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <select
-                                        value={user.role}
-                                        data-user-id={user.user_id}
-                                        onChange={(e) => handleRoleChange(user.user_id, e.target.value as any, user.role, user.full_name)}
-                                        disabled={loading === user.user_id}
-                                        className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
-                                    >
-                                        <option value="user">Usuario</option>
-                                        <option value="store_admin">Admin Tienda</option>
-                                        <option value="super_admin">Super Admin</option>
-                                    </select>
+                                    <div className="flex items-center space-x-2">
+                                        <select
+                                            value={user.role}
+                                            data-user-id={user.user_id}
+                                            onChange={(e) => handleRoleChange(user.user_id, e.target.value as any, user.role, user.full_name)}
+                                            disabled={loading === user.user_id}
+                                            className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gray-900 disabled:opacity-50"
+                                        >
+                                            <option value="user">Usuario</option>
+                                            <option value="store_admin">Admin Tienda</option>
+                                            <option value="super_admin">Super Admin</option>
+                                        </select>
+                                        <button
+                                            onClick={() => handleToggleStatus(user.user_id, user.is_active !== false, user.full_name)}
+                                            disabled={loading === user.user_id}
+                                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors disabled:opacity-50 ${user.is_active !== false
+                                                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                }`}
+                                            title={user.is_active !== false ? 'Deshabilitar usuario' : 'Habilitar usuario'}
+                                        >
+                                            {user.is_active !== false ? (
+                                                <>
+                                                    <Ban className="w-4 h-4 inline mr-1" />
+                                                    Deshabilitar
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <CheckCircle className="w-4 h-4 inline mr-1" />
+                                                    Habilitar
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

@@ -31,43 +31,44 @@ export async function POST(request: NextRequest) {
 
     // Crear mensaje para WhatsApp
     if (format === 'whatsapp') {
-      let message = `🎉 *COTIZACIÓN PERSONALIZADA*\n\n`
-      message += `Hola *${quotation.customer_name}*! 👋\n\n`
-      message += `Gracias por tu interés. Te envío una cotización especial:\n\n`
-      message += `📋 *Ticket:* ${quotation.ticket}\n\n`
-      message += `*PRODUCTOS:*\n`
+      let message = `COTIZACION PERSONALIZADA\n\n`
+      message += `Hola ${quotation.customer_name}!\n\n`
+      message += `Gracias por tu interes. Te envio una cotizacion especial:\n\n`
+      message += `Ticket: ${quotation.ticket}\n\n`
+      message += `PRODUCTOS:\n`
       
       items.forEach((item: any, index: number) => {
-        message += `\n${index + 1}. *${item.name}*\n`
+        message += `\n${index + 1}. ${item.name}\n`
         if (item.size) message += `   Talla: ${item.size}\n`
         if (item.color) message += `   Color: ${item.color}\n`
         message += `   Cantidad: ${item.quantity}\n`
         
         if (item.discount > 0) {
-          message += `   ~~$${item.originalPrice.toLocaleString()}~~ → *$${item.adjustedPrice.toLocaleString()}* 🔥\n`
-          message += `   💰 Descuento: ${item.discount}%\n`
+          message += `   Precio original: $${item.originalPrice.toLocaleString()}\n`
+          message += `   Precio con descuento: $${item.adjustedPrice.toLocaleString()}\n`
+          message += `   Descuento: ${item.discount}%\n`
         } else {
           message += `   Precio: $${item.adjustedPrice.toLocaleString()}\n`
         }
-        message += `   Subtotal: *$${(item.adjustedPrice * item.quantity).toLocaleString()}*\n`
+        message += `   Subtotal: $${(item.adjustedPrice * item.quantity).toLocaleString()}\n`
       })
 
-      message += `\n━━━━━━━━━━━━━━━━\n`
+      message += `\n------------------------\n`
       
       if (totalDiscount > 0) {
         message += `Subtotal: $${originalTotal.toLocaleString()}\n`
-        message += `Descuento (${discountPercentage}%): -$${totalDiscount.toLocaleString()} 🎁\n`
-        message += `\n*TOTAL: $${adjustedTotal.toLocaleString()}* ✨\n`
+        message += `Descuento (${discountPercentage}%): -$${totalDiscount.toLocaleString()}\n`
+        message += `\nTOTAL: $${adjustedTotal.toLocaleString()}\n`
       } else {
-        message += `\n*TOTAL: $${adjustedTotal.toLocaleString()}*\n`
+        message += `\nTOTAL: $${adjustedTotal.toLocaleString()}\n`
       }
 
       if (notes) {
-        message += `\n📝 *Nota:* ${notes}\n`
+        message += `\nNota: ${notes}\n`
       }
 
-      message += `\n⏰ *Oferta válida por ${validUntil} días*\n\n`
-      message += `¿Te gustaría proceder con esta compra? 😊`
+      message += `\nOferta valida por ${validUntil} dias\n\n`
+      message += `Te gustaria proceder con esta compra?`
 
       const whatsappUrl = `https://wa.me/${quotation.customer_phone}?text=${encodeURIComponent(message)}`
 

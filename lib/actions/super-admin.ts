@@ -202,6 +202,25 @@ export async function updateUserRole(userId: string, role: 'super_admin' | 'stor
   return data
 }
 
+export async function toggleUserStatus(userId: string, isActive: boolean) {
+  await requireSuperAdmin()
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .update({ is_active: isActive })
+    .eq('user_id', userId)
+    .select()
+    .single()
+
+  if (error) throw error
+
+  await logActivity(isActive ? 'enable_user' : 'disable_user', 'user', userId, { is_active: isActive })
+
+  revalidatePath('/super-admin/users')
+  return data
+}
+
 // ============= ANALYTICS =============
 
 export async function getGlobalStats() {

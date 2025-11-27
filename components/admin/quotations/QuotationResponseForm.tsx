@@ -70,7 +70,16 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
 
     const handleSendResponse = async (format: 'whatsapp' | 'pdf') => {
         setSending(true)
+
+        // Para WhatsApp, abrir ventana inmediatamente para evitar bloqueo de popup
+        let whatsappWindow: Window | null = null
+        if (format === 'whatsapp') {
+            whatsappWindow = window.open('about:blank', '_blank')
+        }
+
         try {
+            console.log('📤 Enviando respuesta de cotización:', { format, quotationId: quotation.id })
+
             const response = await fetch('/api/quotations/respond', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -91,25 +100,46 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
                 })
             })
 
+            console.log('📥 Respuesta recibida:', response.status)
+
             const data = await response.json()
-            if (!response.ok) throw new Error(data.error)
+            console.log('📊 Datos:', data)
+
+            if (!response.ok) {
+                console.error('❌ Error en respuesta:', data.error)
+                if (whatsappWindow) whatsappWindow.close()
+                throw new Error(data.error)
+            }
 
             if (format === 'whatsapp') {
-                window.open(data.whatsappUrl, '_blank')
-                toast.success('Mensaje preparado para WhatsApp')
+                console.log('📱 Abriendo WhatsApp:', data.whatsappUrl)
+                if (data.whatsappUrl && whatsappWindow) {
+                    whatsappWindow.location.href = data.whatsappUrl
+                    toast.success('Abriendo WhatsApp...')
+                } else {
+                    if (whatsappWindow) whatsappWindow.close()
+                    throw new Error('No se generó la URL de WhatsApp')
+                }
             } else {
                 // Descargar PDF
-                const link = document.createElement('a')
-                link.href = data.pdfBase64
-                link.download = data.filename
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-                toast.success('PDF generado exitosamente')
+                console.log('📄 Descargando PDF:', data.filename)
+                if (data.pdfBase64) {
+                    const link = document.createElement('a')
+                    link.href = data.pdfBase64
+                    link.download = data.filename
+                    document.body.appendChild(link)
+                    link.click()
+                    document.body.removeChild(link)
+                    toast.success('PDF generado exitosamente')
+                } else {
+                    throw new Error('No se generó el PDF')
+                }
             }
 
             onSuccess()
         } catch (error: any) {
+            console.error('❌ Error al enviar respuesta:', error)
+            if (whatsappWindow) whatsappWindow.close()
             toast.error(error.message || 'Error al enviar respuesta')
         } finally {
             setSending(false)

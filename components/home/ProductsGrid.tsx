@@ -24,6 +24,11 @@ export function ProductsGrid({ searchQuery = '', category = 'todos', filters = {
     const supabase = createClient();
 
     try {
+      // Timeout de 10 segundos para evitar bloqueos
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 10000)
+      );
+
       let query = supabase
         .from('products')
         .select(`
@@ -65,7 +70,11 @@ export function ProductsGrid({ searchQuery = '', category = 'todos', filters = {
 
       query = query.limit(20);
 
-      const { data, error } = await query;
+      // Ejecutar con timeout
+      const { data, error } = await Promise.race([
+        query,
+        timeoutPromise
+      ]) as any;
 
       if (error) throw error;
 
@@ -75,8 +84,12 @@ export function ProductsGrid({ searchQuery = '', category = 'todos', filters = {
       })) || [];
 
       setProducts(formattedProducts);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading products:', error);
+      // Si es timeout, mostrar productos vacíos pero no bloquear
+      if (error.message === 'Timeout') {
+        console.warn('⚠️ Timeout al cargar productos, mostrando vacío');
+      }
       setProducts([]);
     } finally {
       setLoading(false);

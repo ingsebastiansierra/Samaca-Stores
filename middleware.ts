@@ -70,14 +70,24 @@ export async function middleware(request: NextRequest) {
 
     const { data: profile, error } = await supabase
       .from('user_profiles')
-      .select('role')
+      .select('role, is_active')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
+
+    if (error) {
+      console.error('❌ [Middleware] Error al consultar perfil:', error.message)
+      return NextResponse.redirect(new URL('/', request.url))
+    }
 
     console.log('📊 [Middleware] Perfil:', profile)
-    console.log('❌ [Middleware] Error:', error)
 
-    if (profile?.role !== 'super_admin') {
+    // Verificar si el usuario está activo
+    if (profile?.is_active === false) {
+      console.log('❌ [Middleware] Usuario deshabilitado')
+      return NextResponse.redirect(new URL('/auth/login?error=disabled', request.url))
+    }
+
+    if (!profile || profile.role !== 'super_admin') {
       console.log('❌ [Middleware] No es super_admin, redirigiendo a /')
       return NextResponse.redirect(new URL('/', request.url))
     }
@@ -86,42 +96,11 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Si el usuario está autenticado y va a la raíz, redirigir según su rol
+  // Si el usuario está autenticado y va a la raíz, NO hacer nada aquí
+  // Dejar que la página maneje la redirección para evitar bloqueos
   if (user && request.nextUrl.pathname === '/') {
-    console.log('🏠 [Middleware] Usuario en raíz:', user.email)
-    console.log('🔍 [Middleware] User ID:', user.id)
-    console.log('🔍 [Middleware] Consultando user_profiles...')
-    
-    // Primero verificar si es super admin
-    const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    console.log('📊 [Middleware] Perfil obtenido:', profile)
-    console.log('❌ [Middleware] Error (si hay):', profileError)
-
-    if (profile?.role === 'super_admin') {
-      console.log('🚀 [Middleware] Super admin detectado, redirigiendo a /super-admin/dashboard')
-      return NextResponse.redirect(new URL('/super-admin/dashboard', request.url))
-    } else {
-      console.log('⚠️ [Middleware] NO es super_admin. Rol:', profile?.role || 'null')
-    }
-
-    // Si no es super admin, verificar si tiene tienda
-    const { data: store } = await supabase
-      .from('stores')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    if (store) {
-      console.log('🏪 [Middleware] Store admin detectado, redirigiendo a /admin/dashboard')
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-    }
-
-    console.log('👤 [Middleware] Usuario normal, permitiendo acceso a /')
+    console.log('🏠 [Middleware] Usuario en raíz, dejando que la página maneje la redirección')
+    return response
   }
 
   // Proteger rutas de admin de tienda
@@ -132,9 +111,15 @@ export async function middleware(request: NextRequest) {
 
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('role')
+      .select('role, is_active')
       .eq('user_id', user.id)
       .maybeSingle()
+
+    // Verificar si el usuario está activo
+    if (profile?.is_active === false) {
+      console.log('❌ [Middleware] Usuario deshabilitado en ruta admin')
+      return NextResponse.redirect(new URL('/auth/login?error=disabled', request.url))
+    }
 
     // Super admins tienen acceso a todo
     if (profile?.role === 'super_admin') {

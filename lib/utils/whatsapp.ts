@@ -1,14 +1,9 @@
 export function createWhatsAppLink(message: string): string {
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ''
   
-  // Limpiar el mensaje de caracteres especiales
-  const cleanMessage = message
-    .replace(/\n/g, '%0A') // Saltos de línea
-    .replace(/\s+/g, ' ') // Múltiples espacios a uno solo
-    .trim()
-  
-  // Codificar el mensaje
-  const encodedMessage = encodeURIComponent(cleanMessage)
+  // Codificar el mensaje directamente
+  // encodeURIComponent ya maneja los saltos de línea correctamente
+  const encodedMessage = encodeURIComponent(message)
   
   // Usar wa.me que es más confiable
   return `https://wa.me/${phone}?text=${encodedMessage}`
