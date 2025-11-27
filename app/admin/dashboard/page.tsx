@@ -1,106 +1,99 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { DashboardStats } from '@/components/admin/DashboardStats'
-import { RecentOrders } from '@/components/admin/RecentOrders'
-import { LowStockProducts } from '@/components/admin/LowStockProducts'
-import { Store } from 'lucide-react'
-import Link from 'next/link'
+import { DashboardClient } from '@/components/admin/dashboard/DashboardClient'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Verificar autenticación
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
 
-  if (userError || !user) {
-    console.error('Error de autenticación:', userError)
-    redirect('/auth/login')
-  }
-
-  // Obtener tienda del usuario
-  const { data: store, error: storeError } = await supabase
+  // Obtener store_id
+  const { data: store } = await supabase
     .from('stores')
-    .select('*')
+    .select('id, name')
     .eq('user_id', user.id)
-    .maybeSingle()
+    .single()
 
-  if (!store) {
-    // El usuario no tiene tienda asignada
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white rounded-xl border-2 border-gray-200 p-8 text-center">
-          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Store className="w-8 h-8 text-orange-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-black mb-2">
-            No tienes una tienda asignada
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Tu cuenta está activa pero aún no tienes una tienda vinculada.
-            Contacta al administrador o crea una nueva tienda.
-          </p>
-          <div className="space-y-3">
-            <Link
-              href="/auth/register"
-              className="block px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              Crear Nueva Tienda
-            </Link>
-            <Link
-              href="/"
-              className="block w-full px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-colors text-center"
-            >
-              Volver al Inicio
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (!store) redirect('/auth/register')
 
-  // Obtener estadísticas en paralelo para mayor velocidad
-  const [
-    { data: products },
-    { data: orders }
-  ] = await Promise.all([
-    supabase
-      .from('products')
-      .select('id, stock, price')
-      .eq('store_id', store.id),
-    supabase
-      .from('orders')
-      .select('id, total, status, created_at, ticket, customer_name')
-      .eq('store_id', store.id)
-      .order('created_at', { ascending: false })
-      .limit(10)
-  ])
+  // Obtener métricas del día
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
 
-  const totalProducts = products?.length || 0
-  const totalOrders = orders?.length || 0
-  const totalRevenue = orders?.reduce((sum, order) => sum + Number(order.total), 0) || 0
-  const lowStockCount = products?.filter(p => p.stock <= 5).length || 0
+  // Ventas del día
+  const { data: todaySales } = await supabase
+    .from('quotations')
+    .select('total')
+    .eq('store_id', store.id)
+    .eq('status', 'converted')
+    .gte('created_at', today.toISOString())
+
+  // Cotizaciones pendientes
+  const { count: pendingQuotations } = await supabase
+    .from('quotations')
+    .select('*', { count: 'exact', head: true })
+    .eq('store_id', store.id)
+    .eq('status', 'pending')
+
+  // Productos con stock bajo
+  const { count: lowStockProducts } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true })
+    .eq('store_id', store.id)
+    .lte('stock', 5)
+    .gt('stock', 0)
+
+  // Total de productos
+  const { count: totalProducts } = await supabase
+    .from('products')
+    .select('*', { count: 'exact', head: true })
+    .eq('store_id', store.id)
+    .eq('is_active', true)
+
+  // Ventas de los últimos 7 días
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+  const { data: weekSales } = await supabase
+    .from('quotations')
+    .select('total, created_at')
+    .eq('store_id', store.id)
+    .eq('status', 'converted')
+    .gte('created_at', sevenDaysAgo.toISOString())
+    .order('created_at', { ascending: true })
+
+  // Top productos más cotizados
+  const { data: quotations } = await supabase
+    .from('quotations')
+    .select('items')
+    .eq('store_id', store.id)
+    .gte('created_at', sevenDaysAgo.toISOString())
+
+  // Procesar productos más cotizados
+  const productCounts: Record<string, number> = {}
+  quotations?.forEach(q => {
+    q.items?.forEach((item: any) => {
+      productCounts[item.name] = (productCounts[item.name] || 0) + item.quantity
+    })
+  })
+
+  const topProducts = Object.entries(productCounts)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([name, count]) => ({ name, count }))
+
+  const todayTotal = todaySales?.reduce((sum, sale) => sum + sale.total, 0) || 0
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-black">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Bienvenido a {store.name}</p>
-      </div>
-
-      {/* Stats */}
-      <DashboardStats
-        totalProducts={totalProducts}
-        totalOrders={totalOrders}
-        totalRevenue={totalRevenue}
-        lowStockCount={lowStockCount}
-      />
-
-      {/* Content Grid */}
-      <div className="grid lg:grid-cols-2 gap-8">
-        <RecentOrders orders={orders || []} />
-        <LowStockProducts storeId={store.id} />
-      </div>
-    </div>
+    <DashboardClient
+      storeName={store.name}
+      todayTotal={todayTotal}
+      pendingQuotations={pendingQuotations || 0}
+      lowStockProducts={lowStockProducts || 0}
+      totalProducts={totalProducts || 0}
+      weekSales={weekSales || []}
+      topProducts={topProducts}
+    />
   )
 }
