@@ -24,23 +24,12 @@ export function HomeClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Search & Categories */}
-      <section className="relative z-10 mt-0 pb-8 sm:pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white border border-gray-200 rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 shadow-lg">
-            <SearchBar onSearch={handleSearch} />
-            <div className="mt-6 sm:mt-8">
-              <CategoriesGrid
-                onCategorySelect={handleCategorySelect}
-                selectedCategory={selectedCategory}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section with Search and Categories */}
+      <HeroSection
+        onSearch={handleSearch}
+        onCategorySelect={handleCategorySelect}
+        selectedCategory={selectedCategory}
+      />
 
       {/* Grid de productos */}
       <section className="py-8 sm:py-12">

@@ -100,31 +100,31 @@ export function SearchBar({ onSearch }: SearchBarProps) {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto" ref={searchRef}>
+    <div className="w-full max-w-3xl mx-auto" ref={searchRef}>
       {/* Buscador compacto */}
       <form onSubmit={handleSearch} className="relative">
         <div className="flex gap-2">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               value={search}
               onChange={(e) => handleInputChange(e.target.value)}
               onFocus={() => setShowSuggestions(true)}
               placeholder="Buscar productos..."
-              className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:border-sky-600 focus:ring-2 focus:ring-sky-500 transition-all"
+              className="w-full pl-12 pr-4 py-4 text-base bg-white/95 backdrop-blur-sm border-2 border-white/50 rounded-xl focus:border-white focus:ring-2 focus:ring-white/50 transition-all shadow-lg placeholder:text-gray-400"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-3 sm:px-4 py-3 sm:py-3.5 border rounded-lg transition-all flex items-center gap-1.5 ${showFilters
-                ? 'bg-sky-600 text-white border-sky-600'
-                : 'bg-gray-100 border-gray-300 hover:bg-gray-200 text-gray-700'
+            className={`px-4 py-4 border-2 rounded-xl transition-all flex items-center gap-1.5 shadow-lg ${showFilters
+              ? 'bg-white text-purple-600 border-white'
+              : 'bg-white/95 backdrop-blur-sm border-white/50 hover:bg-white hover:border-white text-gray-700'
               }`}
           >
-            <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5" />
+            <SlidersHorizontal className="w-5 h-5" />
           </button>
         </div>
 
@@ -221,7 +221,7 @@ export function SearchBar({ onSearch }: SearchBarProps) {
 
       {/* Panel de filtros compacto */}
       {showFilters && (
-        <div className="mt-3 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="mt-3 p-4 bg-white/95 backdrop-blur-sm rounded-xl border-2 border-white/50 shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium text-sm">Filtros</h3>
             <button

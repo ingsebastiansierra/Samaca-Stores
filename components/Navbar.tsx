@@ -86,7 +86,7 @@ export function Navbar() {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-sky-600 border border-sky-700 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
                   <Store className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <span className="text-lg sm:text-2xl font-display font-bold text-gray-900 tracking-wider group-hover:text-sky-600 transition-colors">
+                <span className={`text-lg sm:text-2xl font-display font-bold tracking-wider transition-colors ${textColorClass} ${textHoverClass.replace('hover:', 'group-hover:')}`}>
                   SAMACÁ
                 </span>
               </motion.div>
@@ -171,9 +171,18 @@ export function Navbar() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="md:hidden p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-900"
+                className={`md:hidden p-1.5 sm:p-2 rounded-lg transition-colors ${(isStorePage || isStoreDetail || scrolled)
+                    ? 'bg-gray-900 hover:bg-gray-800'
+                    : 'bg-white hover:bg-gray-100'
+                  }`}
               >
-                {isOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
+                {isOpen ? (
+                  <X className={`w-5 h-5 sm:w-6 sm:h-6 ${(isStorePage || isStoreDetail || scrolled) ? 'text-white' : 'text-gray-900'
+                    }`} />
+                ) : (
+                  <Menu className={`w-5 h-5 sm:w-6 sm:h-6 ${(isStorePage || isStoreDetail || scrolled) ? 'text-white' : 'text-gray-900'
+                    }`} />
+                )}
               </button>
             </div>
           </div>
