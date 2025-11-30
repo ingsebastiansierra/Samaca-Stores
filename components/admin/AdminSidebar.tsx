@@ -11,7 +11,8 @@ import {
   Settings,
   Store,
   X,
-  FileText
+  FileText,
+  BookOpen
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -19,6 +20,7 @@ import { createClient } from '@/lib/supabase/client'
 const menuItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/cotizaciones', label: 'Cotizaciones', icon: FileText },
+  { href: '/admin/catalogo-pdf', label: 'Catálogo PDF', icon: BookOpen },
   { href: '/admin/products', label: 'Productos', icon: Package },
   { href: '/admin/categories', label: 'Categorías', icon: FolderTree },
   { href: '/admin/orders', label: 'Pedidos', icon: ShoppingCart },

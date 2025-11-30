@@ -14,11 +14,13 @@ import {
     ArrowRight,
     Calendar,
     DollarSign,
-    User
+    User,
+    FileCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { QuickSaveButton } from '@/components/admin/quotations/QuickSaveButton';
 
 // Definición de estados para mapeo visual
 const STATUS_CONFIG = {
@@ -75,10 +77,20 @@ export default function AdminQuotationsPage() {
 
             console.log('Loading quotations for store:', storeId);
 
-            // Cargar cotizaciones de la tienda
+            // Cargar cotizaciones de la tienda con sus respuestas
             const { data, error } = await supabase
                 .from('quotations')
-                .select('*')
+                .select(`
+                    *,
+                    quotation_responses (
+                        id,
+                        adjusted_total,
+                        total_discount,
+                        discount_percentage,
+                        valid_until_date,
+                        created_at
+                    )
+                `)
                 .eq('store_id', storeId)
                 .order('created_at', { ascending: false });
 
@@ -179,12 +191,23 @@ export default function AdminQuotationsPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center justify-between pt-2 border-t">
-                                                <div className="flex items-center gap-1 text-sm">
-                                                    <DollarSign className="h-4 w-4 text-gray-400" />
-                                                    <span className="font-bold text-gray-900">${quotation.total.toLocaleString()}</span>
+                                            <div className="pt-2 border-t space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-1 text-sm">
+                                                        <DollarSign className="h-4 w-4 text-gray-400" />
+                                                        <span className="font-bold text-gray-900">${quotation.total.toLocaleString()}</span>
+                                                        {quotation.quotation_responses && quotation.quotation_responses.length > 0 && (
+                                                            <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">
+                                                                <FileCheck className="h-3 w-3" />
+                                                                Respondida
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <ArrowRight className="h-4 w-4 text-gray-400" />
                                                 </div>
-                                                <ArrowRight className="h-4 w-4 text-gray-400" />
+                                                {(!quotation.quotation_responses || quotation.quotation_responses.length === 0) && (
+                                                    <QuickSaveButton quotation={quotation} onSuccess={loadQuotations} />
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -225,8 +248,16 @@ export default function AdminQuotationsPage() {
                                             <td className="px-6 py-4 text-gray-600">
                                                 {formatDistanceToNow(new Date(quotation.created_at), { addSuffix: true, locale: es })}
                                             </td>
-                                            <td className="px-6 py-4 font-medium text-gray-900">
-                                                ${quotation.total.toLocaleString()}
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium text-gray-900">${quotation.total.toLocaleString()}</span>
+                                                    {quotation.quotation_responses && quotation.quotation_responses.length > 0 && (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs">
+                                                            <FileCheck className="h-3 w-3" />
+                                                            Respondida
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
@@ -235,12 +266,17 @@ export default function AdminQuotationsPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <Link href={`/admin/cotizaciones/${quotation.id}`}>
-                                                    <Button variant="ghost" size="sm" className="hover:bg-gray-100">
-                                                        Ver Detalle
-                                                        <ArrowRight className="ml-2 h-4 w-4" />
-                                                    </Button>
-                                                </Link>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    {(!quotation.quotation_responses || quotation.quotation_responses.length === 0) && (
+                                                        <QuickSaveButton quotation={quotation} onSuccess={loadQuotations} />
+                                                    )}
+                                                    <Link href={`/admin/cotizaciones/${quotation.id}`}>
+                                                        <Button variant="ghost" size="sm" className="hover:bg-gray-100">
+                                                            Ver Detalle
+                                                            <ArrowRight className="ml-2 h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                </div>
                                             </td>
                                         </tr>
                                     );

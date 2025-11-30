@@ -13,7 +13,8 @@ import {
     MessageCircle,
     CheckCircle,
     Loader2,
-    FileEdit
+    FileEdit,
+    Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -39,11 +40,36 @@ export default function AdminQuotationDetailPage() {
         try {
             const { data, error } = await supabase
                 .from('quotations')
-                .select('*')
+                .select(`
+                    *,
+                    quotation_responses (
+                        id,
+                        items,
+                        original_total,
+                        adjusted_total,
+                        total_discount,
+                        discount_percentage,
+                        notes,
+                        valid_until_days,
+                        valid_until_date,
+                        created_at
+                    )
+                `)
                 .eq('id', params.id)
                 .single();
 
             if (error) throw error;
+
+            // Ordenar respuestas por fecha descendente (la más reciente primero)
+            if (data.quotation_responses && Array.isArray(data.quotation_responses)) {
+                data.quotation_responses.sort((a: any, b: any) =>
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                );
+            }
+
+            console.log('📊 Cotización cargada:', data);
+            console.log('📋 Respuestas ordenadas:', data?.quotation_responses);
+
             setQuotation(data);
         } catch (error) {
             console.error('Error loading quotation:', error);
@@ -95,6 +121,13 @@ export default function AdminQuotationDetailPage() {
     if (!quotation) return <div className="p-8">Cotización no encontrada</div>;
 
     const isConverted = quotation.status === 'converted';
+
+    // Normalizar respuestas a array (por si Supabase devuelve objeto único debido a restricción UNIQUE)
+    const responses = Array.isArray(quotation.quotation_responses)
+        ? quotation.quotation_responses
+        : quotation.quotation_responses
+            ? [quotation.quotation_responses]
+            : [];
 
     return (
         <div className="p-4 md:p-6 max-w-5xl mx-auto pt-20 md:pt-6">
@@ -177,46 +210,185 @@ export default function AdminQuotationDetailPage() {
                             </h2>
                         </div>
                         <div className="divide-y">
-                            {quotation.items.map((item: any, idx: number) => (
-                                <div key={idx} className="p-4 flex gap-3 md:gap-4">
-                                    <div className="relative h-14 w-14 md:h-16 md:w-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
-                                        {item.image_url ? (
-                                            <Image
-                                                src={item.image_url}
-                                                alt={item.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-gray-400">
-                                                <Package className="h-6 w-6" />
+                            {(responses && responses.length > 0
+                                ? responses[0].items
+                                : quotation.items
+                            ).map((item: any, idx: number) => {
+                                const hasResponse = responses && responses.length > 0
+                                const hasDiscount = hasResponse && item.discount > 0
+
+                                return (
+                                    <div key={idx} className="p-4 flex gap-3 md:gap-4">
+                                        <div className="relative h-14 w-14 md:h-16 md:w-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+                                            {item.image_url ? (
+                                                <Image
+                                                    src={item.image_url}
+                                                    alt={item.name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-gray-400">
+                                                    <Package className="h-6 w-6" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-gray-900 text-sm md:text-base truncate">{item.name}</h3>
+                                            <div className="text-xs md:text-sm text-gray-500">
+                                                {item.size && <span>Talla: {item.size} • </span>}
+                                                {item.color && <span>Color: {item.color}</span>}
                                             </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-gray-900 text-sm md:text-base truncate">{item.name}</h3>
-                                        <div className="text-xs md:text-sm text-gray-500">
-                                            {item.size && <span>Talla: {item.size} • </span>}
-                                            {item.color && <span>Color: {item.color}</span>}
+                                            {hasDiscount && (
+                                                <div className="mt-1">
+                                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                        {item.discount}% OFF
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="text-right">
+                                            {hasDiscount ? (
+                                                <>
+                                                    <p className="text-xs text-gray-400 line-through">
+                                                        ${(item.originalPrice * item.quantity).toLocaleString()}
+                                                    </p>
+                                                    <p className="font-bold text-green-600 text-sm md:text-base">
+                                                        ${(item.adjustedPrice * item.quantity).toLocaleString()}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {item.quantity} x ${item.adjustedPrice.toLocaleString()}
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="font-medium text-gray-900 text-sm md:text-base">
+                                                        ${((hasResponse ? item.adjustedPrice : item.price) * item.quantity).toLocaleString()}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {item.quantity} x ${(hasResponse ? item.adjustedPrice : item.price).toLocaleString()}
+                                                    </p>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="font-medium text-gray-900 text-sm md:text-base">
-                                            ${(item.price * item.quantity).toLocaleString()}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            {item.quantity} x ${item.price.toLocaleString()}
-                                        </p>
+                                )
+                            })}
+                        </div>
+                        <div className="p-4 bg-gray-50 border-t">
+                            {responses && responses.length > 0 ? (
+                                <div className="space-y-2">
+                                    {responses[0].total_discount > 0 && (
+                                        <>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-gray-600">Subtotal Original:</span>
+                                                <span className="text-gray-600">${responses[0].original_total.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-green-600">Descuento ({responses[0].discount_percentage}%):</span>
+                                                <span className="text-green-600">-${responses[0].total_discount.toLocaleString()}</span>
+                                            </div>
+                                            <div className="border-t pt-2"></div>
+                                        </>
+                                    )}
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-semibold text-gray-900">Total Cotizado (Última Respuesta)</span>
+                                        <span className="text-lg md:text-xl font-bold text-green-700">
+                                            ${responses[0].adjusted_total.toLocaleString()}
+                                        </span>
                                     </div>
                                 </div>
-                            ))}
+                            ) : (
+                                <div className="flex justify-between items-center">
+                                    <span className="font-semibold text-gray-900">Total Venta</span>
+                                    <span className="text-lg md:text-xl font-bold text-green-700">
+                                        ${quotation.total.toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                        <div className="p-4 bg-gray-50 border-t flex justify-between items-center">
-                            <span className="font-semibold text-gray-900">Total Venta</span>
-                            <span className="text-lg md:text-xl font-bold text-green-700">
-                                ${quotation.total.toLocaleString()}
-                            </span>
-                        </div>
+
+                        {/* Historial de Respuestas Integrado */}
+                        {responses && responses.length > 0 && (
+                            <div className="border-t-4 border-green-50">
+                                <div className="p-4 bg-green-50/50 border-b border-green-100">
+                                    <h2 className="font-semibold text-green-900 flex items-center gap-2">
+                                        <CheckCircle className="h-5 w-5 text-green-600" />
+                                        Historial de Respuestas ({responses.length})
+                                    </h2>
+                                </div>
+                                <div className="divide-y divide-gray-100">
+                                    {responses.map((response: any, idx: number) => (
+                                        <div key={response.id} className="p-4 md:p-6 bg-white hover:bg-gray-50 transition-colors">
+                                            {/* Header de la respuesta */}
+                                            <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-green-200">
+                                                        #{responses.length - idx}
+                                                    </span>
+                                                    <span className="text-sm text-gray-500">
+                                                        {new Date(response.created_at).toLocaleDateString('es-CO', {
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                                    <Clock className="h-3 w-3" />
+                                                    <span>Vence: {new Date(response.valid_until_date).toLocaleDateString('es-CO')}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4 pl-0 md:pl-4 border-l-2 border-green-100">
+                                                {/* Productos de esta respuesta */}
+                                                <div className="space-y-2">
+                                                    {response.items.map((item: any, itemIdx: number) => (
+                                                        <div key={itemIdx} className="flex justify-between items-center text-sm">
+                                                            <div className="flex-1">
+                                                                <span className="font-medium text-gray-900">{item.quantity}x {item.name}</span>
+                                                                {(item.size || item.color) && (
+                                                                    <span className="text-gray-500 ml-2 text-xs">
+                                                                        ({[item.size, item.color].filter(Boolean).join(' / ')})
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-right">
+                                                                {item.discount > 0 ? (
+                                                                    <div className="flex flex-col items-end">
+                                                                        <span className="text-xs text-gray-400 line-through">${(item.originalPrice * item.quantity).toLocaleString()}</span>
+                                                                        <span className="font-bold text-green-600">${(item.adjustedPrice * item.quantity).toLocaleString()}</span>
+                                                                    </div>
+                                                                ) : (
+                                                                    <span className="font-medium text-gray-900">${(item.adjustedPrice * item.quantity).toLocaleString()}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Resumen de esta respuesta */}
+                                                <div className="bg-gray-50 rounded p-3 text-sm flex justify-between items-center">
+                                                    <span className="text-gray-600">Total Respuesta:</span>
+                                                    <span className="font-bold text-green-700 text-lg">
+                                                        ${response.adjusted_total.toLocaleString()}
+                                                    </span>
+                                                </div>
+
+                                                {/* Notas */}
+                                                {response.notes && (
+                                                    <div className="text-sm text-blue-800 bg-blue-50 p-3 rounded border border-blue-100">
+                                                        <span className="font-semibold">Nota:</span> {response.notes}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -279,7 +451,9 @@ export default function AdminQuotationDetailPage() {
                     onClose={() => setShowResponseForm(false)}
                     onSuccess={() => {
                         setShowResponseForm(false)
+                        toast.success('Respuesta actualizada correctamente')
                         loadQuotation()
+                        router.refresh()
                     }}
                 />
             )}

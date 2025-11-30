@@ -29,6 +29,15 @@ export function Navbar() {
         ? 'bg-white/90 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg'
         : 'bg-transparent';
 
+  // Clase dinámica para el color del texto
+  const textColorClass = (isStorePage || isStoreDetail || scrolled)
+    ? 'text-gray-900'
+    : 'text-white';
+
+  const textHoverClass = (isStorePage || isStoreDetail || scrolled)
+    ? 'hover:text-sky-600'
+    : 'hover:text-sky-400';
+
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => setScrolled(window.scrollY > 0);
@@ -94,7 +103,7 @@ export function Navbar() {
                 >
                   {link.hasDropdown ? (
                     <>
-                      <button className="flex items-center gap-1 text-gray-700 hover:text-sky-600 transition-colors font-medium text-sm tracking-wide group">
+                      <button className={`flex items-center gap-1 ${textColorClass} ${textHoverClass} transition-colors font-medium text-sm tracking-wide group`}>
                         {link.label}
                         <ChevronDown className="w-4 h-4" />
                         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-600 group-hover:w-full transition-all duration-300" />
@@ -127,7 +136,7 @@ export function Navbar() {
                     <Link
                       href={link.href || '#'}
                       prefetch={true}
-                      className="relative text-gray-700 hover:text-sky-600 transition-colors font-medium text-sm tracking-wide group"
+                      className={`relative ${textColorClass} ${textHoverClass} transition-colors font-medium text-sm tracking-wide group`}
                     >
                       {link.label}
                       <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-600 group-hover:w-full transition-all duration-300" />
@@ -145,7 +154,7 @@ export function Navbar() {
                   whileTap={{ scale: 0.95 }}
                   className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors border border-transparent hover:border-sky-600/30 cursor-pointer"
                 >
-                  <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700 group-hover:text-sky-600 transition-colors" />
+                  <ShoppingCart className={`w-5 h-5 sm:w-6 sm:h-6 ${textColorClass} ${textHoverClass.replace('hover:', 'group-hover:')} transition-colors`} />
                   {mounted && totalItems > 0 && (
                     <span className="absolute -top-1 -right-1 bg-sky-600 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center font-bold shadow-md">
                       {totalItems}

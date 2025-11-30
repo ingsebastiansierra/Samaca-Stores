@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { X, Plus, Minus, FileText, Send, Download } from 'lucide-react'
+import { X, Plus, Minus, FileText, Send, Download, Save } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Image from 'next/image'
 
@@ -68,13 +68,18 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
         return originalTotal - adjustedTotal
     }
 
-    const handleSendResponse = async (format: 'whatsapp' | 'pdf') => {
+    const handleSendResponse = async (format: 'whatsapp' | 'pdf' | 'save') => {
         setSending(true)
 
         // Para WhatsApp, abrir ventana inmediatamente para evitar bloqueo de popup
         let whatsappWindow: Window | null = null
         if (format === 'whatsapp') {
             whatsappWindow = window.open('about:blank', '_blank')
+        }
+
+        // Para "save", solo guardar sin enviar
+        if (format === 'save') {
+            console.log('💾 Guardando respuesta sin enviar...')
         }
 
         try {
@@ -111,7 +116,11 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
                 throw new Error(data.error)
             }
 
-            if (format === 'whatsapp') {
+            if (format === 'save') {
+                // Solo guardar, no enviar nada
+                console.log('✅ Respuesta guardada exitosamente')
+                toast.success('Respuesta guardada exitosamente')
+            } else if (format === 'whatsapp') {
                 console.log('📱 Abriendo WhatsApp:', data.whatsappUrl)
                 if (data.whatsappUrl && whatsappWindow) {
                     whatsappWindow.location.href = data.whatsappUrl
@@ -120,7 +129,7 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
                     if (whatsappWindow) whatsappWindow.close()
                     throw new Error('No se generó la URL de WhatsApp')
                 }
-            } else {
+            } else if (format === 'pdf') {
                 // Descargar PDF
                 console.log('📄 Descargando PDF:', data.filename)
                 if (data.pdfBase64) {
@@ -293,24 +302,37 @@ export function QuotationResponseForm({ quotation, onClose, onSuccess }: Quotati
 
                 {/* Footer */}
                 <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-col gap-3">
+                        {/* Botón de Guardar Respuesta */}
                         <Button
-                            onClick={() => handleSendResponse('whatsapp')}
+                            onClick={() => handleSendResponse('save')}
                             disabled={sending}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white !h-12 font-semibold"
+                            className="w-full bg-sky-600 hover:bg-sky-700 text-white !h-12 font-semibold"
                         >
-                            <Send className="w-5 h-5 mr-2" />
-                            Enviar por WhatsApp
+                            <Save className="w-5 h-5 mr-2" />
+                            Guardar Respuesta
                         </Button>
-                        <Button
-                            onClick={() => handleSendResponse('pdf')}
-                            disabled={sending}
-                            variant="outline"
-                            className="flex-1 border-2 border-sky-600 text-sky-600 hover:bg-sky-50 !h-12 font-semibold"
-                        >
-                            <Download className="w-5 h-5 mr-2" />
-                            Generar PDF
-                        </Button>
+
+                        {/* Botones de Envío */}
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <Button
+                                onClick={() => handleSendResponse('whatsapp')}
+                                disabled={sending}
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white !h-12 font-semibold"
+                            >
+                                <Send className="w-5 h-5 mr-2" />
+                                Enviar por WhatsApp
+                            </Button>
+                            <Button
+                                onClick={() => handleSendResponse('pdf')}
+                                disabled={sending}
+                                variant="outline"
+                                className="flex-1 border-2 border-gray-400 text-gray-700 hover:bg-gray-100 !h-12 font-semibold"
+                            >
+                                <Download className="w-5 h-5 mr-2" />
+                                Generar PDF
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
