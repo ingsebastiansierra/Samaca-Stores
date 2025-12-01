@@ -90,7 +90,7 @@ export default function LoginPage() {
     } catch (err: any) {
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {}
-        err.errors.forEach((error) => {
+        err.issues.forEach((error) => {
           const path = error.path.join('.')
           errors[path] = error.message
         })

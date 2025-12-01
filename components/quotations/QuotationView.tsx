@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { CheckCircle, Clock, Package, MapPin, Phone } from 'lucide-react'
+import { formatPhoneForWhatsApp } from '@/lib/utils/phone'
 
 interface QuotationViewProps {
     quotation: any
@@ -186,7 +187,7 @@ export function QuotationView({ quotation, response }: QuotationViewProps) {
                     <div className="space-y-3">
                         {quotation.stores?.whatsapp && (
                             <a
-                                href={`https://wa.me/${quotation.stores.whatsapp}`}
+                                href={`https://wa.me/${formatPhoneForWhatsApp(quotation.stores.whatsapp)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-3 text-green-600 hover:text-green-700"
@@ -205,7 +206,7 @@ export function QuotationView({ quotation, response }: QuotationViewProps) {
 
                     {response && !isExpired && (
                         <a
-                            href={`https://wa.me/${quotation.stores?.whatsapp}?text=${encodeURIComponent(`Hola! Quiero proceder con la cotización ${quotation.ticket}`)}`}
+                            href={`https://wa.me/${formatPhoneForWhatsApp(quotation.stores?.whatsapp || '')}?text=${encodeURIComponent(`Hola! Quiero proceder con la cotización ${quotation.ticket}`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"

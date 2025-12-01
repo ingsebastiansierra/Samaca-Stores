@@ -70,11 +70,11 @@ export async function POST(request: Request) {
             items: quotation.items,
             subtotal: quotation.subtotal,
             discount: quotation.discount,
+            shipping_cost: 0,
+            tax: 0,
             total: quotation.total,
             status: 'confirmed', // Estado inicial de la orden
             payment_status: 'paid', // Asumimos pagado al cerrar venta manualmente
-            paid_at: new Date().toISOString(),
-            created_at: new Date().toISOString(),
         };
 
         const { data: order, error: orderError } = await supabase
@@ -85,7 +85,8 @@ export async function POST(request: Request) {
 
         if (orderError) {
             console.error('Error creating order:', orderError);
-            throw new Error('Error al crear el pedido');
+            console.error('Order data:', orderData);
+            throw new Error(`Error al crear el pedido: ${orderError.message}`);
         }
 
         // 5. Actualizar la Cotización

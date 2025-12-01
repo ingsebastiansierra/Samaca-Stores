@@ -91,7 +91,7 @@ export default function RegisterPage() {
     } catch (err) {
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {}
-        err.errors.forEach((error) => {
+        err.issues.forEach((error) => {
           const path = error.path.join('.')
           errors[path] = error.message
         })
@@ -348,8 +348,8 @@ export default function RegisterPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, accountType: 'customer' })}
                     className={`p-4 border-2 rounded-lg transition-all ${formData.accountType === 'customer'
-                        ? 'border-black bg-black text-white'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <User className="w-6 h-6 mx-auto mb-2" />
@@ -359,8 +359,8 @@ export default function RegisterPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, accountType: 'store_admin' })}
                     className={`p-4 border-2 rounded-lg transition-all ${formData.accountType === 'store_admin'
-                        ? 'border-black bg-black text-white'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <Building2 className="w-6 h-6 mx-auto mb-2" />
@@ -383,8 +383,8 @@ export default function RegisterPage() {
                       type="button"
                       onClick={() => setStoreOption('new')}
                       className={`p-4 border-2 rounded-lg transition-all ${storeOption === 'new'
-                          ? 'border-black bg-white shadow-md'
-                          : 'border-gray-300 bg-white/50 hover:border-gray-400'
+                        ? 'border-black bg-white shadow-md'
+                        : 'border-gray-300 bg-white/50 hover:border-gray-400'
                         }`}
                     >
                       <Plus className="w-5 h-5 mx-auto mb-2" />
@@ -394,8 +394,8 @@ export default function RegisterPage() {
                       type="button"
                       onClick={() => setStoreOption('existing')}
                       className={`p-4 border-2 rounded-lg transition-all ${storeOption === 'existing'
-                          ? 'border-black bg-white shadow-md'
-                          : 'border-gray-300 bg-white/50 hover:border-gray-400'
+                        ? 'border-black bg-white shadow-md'
+                        : 'border-gray-300 bg-white/50 hover:border-gray-400'
                         }`}
                     >
                       <LinkIcon className="w-5 h-5 mx-auto mb-2" />

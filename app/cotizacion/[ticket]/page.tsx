@@ -3,12 +3,13 @@ import { notFound } from 'next/navigation'
 import { QuotationView } from '@/components/quotations/QuotationView'
 
 interface PageProps {
-    params: {
+    params: Promise<{
         ticket: string
-    }
+    }>
 }
 
 export default async function QuotationPage({ params }: PageProps) {
+    const { ticket } = await params
     const supabase = await createClient()
 
     // Obtener la cotización
@@ -26,7 +27,7 @@ export default async function QuotationPage({ params }: PageProps) {
         logo_url
       )
     `)
-        .eq('ticket', params.ticket)
+        .eq('ticket', ticket)
         .single()
 
     if (quotationError || !quotation) {

@@ -169,15 +169,17 @@ export default function CheckoutPage() {
                   id="phone"
                   type="tel"
                   value={customerData.phone}
-                  onChange={(e) =>
-                    setCustomerData({ ...customerData, phone: e.target.value })
-                  }
-                  placeholder="312 310 6507"
+                  onChange={(e) => {
+                    // Limpiar el número: solo dígitos
+                    const cleaned = e.target.value.replace(/\D/g, '');
+                    setCustomerData({ ...customerData, phone: cleaned });
+                  }}
+                  placeholder="3123106507"
                   required
                   className="mt-1"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Las tiendas te contactarán por WhatsApp
+                  Las tiendas te contactarán por WhatsApp (solo números, sin espacios)
                 </p>
               </div>
 

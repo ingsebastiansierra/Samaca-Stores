@@ -2,7 +2,8 @@ import ImportProductsForm from '@/components/super-admin/ImportProductsForm'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-export default function ImportProductsPage({ params }: { params: { id: string } }) {
+export default async function ImportProductsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center space-x-4">

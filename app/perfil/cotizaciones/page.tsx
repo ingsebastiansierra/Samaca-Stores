@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
+import { formatPhoneForWhatsApp } from '@/lib/utils/phone';
 import {
   Package,
   Store,
@@ -303,7 +304,7 @@ export default function MisCotizacionesPage() {
 
                   {quotation.store_whatsapp && (
                     <a
-                      href={`https://wa.me/${quotation.store_whatsapp}?text=Hola, consulto por la cotización ${quotation.ticket}`}
+                      href={`https://wa.me/${formatPhoneForWhatsApp(quotation.store_whatsapp)}?text=${encodeURIComponent(`Hola, consulto por la cotización ${quotation.ticket}`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1"

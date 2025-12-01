@@ -3,9 +3,10 @@ import Link from 'next/link'
 import { ArrowLeft, Store, MapPin, Phone, Mail, TrendingUp, Package, ShoppingCart, Users } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
-export default async function StoreDetailsPage({ params }: { params: { id: string } }) {
+export default async function StoreDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     try {
-        const { store, products, recentOrders, stats } = await getStoreDetails(params.id)
+        const { store, products, recentOrders, stats } = await getStoreDetails(id)
 
         const getStatusColor = (status: string) => {
             switch (status) {

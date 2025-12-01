@@ -40,8 +40,8 @@ export default function CheckoutPage() {
       const message = createOrderMessage({
         ticket,
         productName: items.length > 1
-          ? `${firstItem.name} y ${items.length - 1} más`
-          : firstItem.name,
+          ? `${firstItem.product.name} y ${items.length - 1} más`
+          : firstItem.product.name,
         size: firstItem.size,
         quantity: items.reduce((sum, item) => sum + item.quantity, 0),
         total: getTotalPrice()
@@ -144,13 +144,13 @@ export default function CheckoutPage() {
               {items.map(item => (
                 <div key={item.id} className="flex justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 truncate">{item.name}</p>
+                    <p className="font-semibold text-gray-900 truncate">{item.product.name}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Cantidad: {item.quantity}
                     </p>
                   </div>
                   <p className="font-bold text-gray-900 whitespace-nowrap">
-                    ${(item.price * item.quantity).toLocaleString('es-CO')}
+                    ${(item.product.price * item.quantity).toLocaleString('es-CO')}
                   </p>
                 </div>
               ))}

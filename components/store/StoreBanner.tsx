@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { MapPin, Phone, Mail, Globe, Facebook, Instagram } from 'lucide-react'
+import { formatPhoneForWhatsApp } from '@/lib/utils/phone'
 
 interface Store {
   id: string
@@ -39,10 +40,10 @@ export function StoreBanner({ store }: StoreBannerProps) {
           className="object-cover opacity-60"
           priority
         />
-        
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-        
+
         {/* Store Logo & Name */}
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
           <div className="max-w-7xl mx-auto">
@@ -67,7 +68,7 @@ export function StoreBanner({ store }: StoreBannerProps) {
                 <h1 className="text-5xl md:text-6xl font-bold mb-3">
                   {store.name}
                 </h1>
-                
+
                 <div className="flex flex-wrap items-center gap-4 text-lg">
                   {store.city && (
                     <div className="flex items-center gap-2">
@@ -75,11 +76,11 @@ export function StoreBanner({ store }: StoreBannerProps) {
                       <span>{store.city}</span>
                     </div>
                   )}
-                  
+
                   {store.address && (
                     <span className="text-gray-300">•</span>
                   )}
-                  
+
                   {store.address && (
                     <span className="text-gray-300">{store.address}</span>
                   )}
@@ -90,7 +91,7 @@ export function StoreBanner({ store }: StoreBannerProps) {
               <div className="flex gap-3">
                 {store.whatsapp && (
                   <a
-                    href={`https://wa.me/${store.whatsapp}`}
+                    href={`https://wa.me/${formatPhoneForWhatsApp(store.whatsapp)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-white/10 backdrop-blur-sm hover:bg-white hover:text-black rounded-full transition-all"
@@ -98,7 +99,7 @@ export function StoreBanner({ store }: StoreBannerProps) {
                     <Phone className="w-6 h-6" />
                   </a>
                 )}
-                
+
                 {store.facebook && (
                   <a
                     href={store.facebook}
@@ -109,7 +110,7 @@ export function StoreBanner({ store }: StoreBannerProps) {
                     <Facebook className="w-6 h-6" />
                   </a>
                 )}
-                
+
                 {store.instagram && (
                   <a
                     href={store.instagram}
@@ -120,7 +121,7 @@ export function StoreBanner({ store }: StoreBannerProps) {
                     <Instagram className="w-6 h-6" />
                   </a>
                 )}
-                
+
                 {store.website && (
                   <a
                     href={store.website}

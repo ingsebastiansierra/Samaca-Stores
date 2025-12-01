@@ -35,6 +35,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Limpiar el número de teléfono: solo dígitos
+    const cleanedPhone = customerData.phone.replace(/\D/g, '');
+    
+    if (cleanedPhone.length < 10) {
+      return NextResponse.json(
+        { error: 'El número de teléfono debe tener al menos 10 dígitos' },
+        { status: 400 }
+      );
+    }
+
     // Agrupar items por tienda
     const itemsByStore: Record<string, any[]> = {};
     const DEFAULT_STORE_ID = 'f00f661a-f20f-448e-aea6-87ab2301fd79'; // Moda Start ID
@@ -85,7 +95,7 @@ export async function POST(request: Request) {
         store_id: storeId,
         user_id: user.id,
         customer_name: customerData.name,
-        customer_phone: customerData.phone,
+        customer_phone: cleanedPhone,
         customer_email: user.email || customerData.email,
         customer_city: customerData.city || 'Samacá',
         items: storeItems.map((item) => ({

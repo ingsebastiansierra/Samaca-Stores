@@ -22,6 +22,99 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 import { QuotationResponseForm } from '@/components/admin/quotations/QuotationResponseForm';
+import { formatPhoneForWhatsApp } from '@/lib/utils/phone';
+
+function PhoneEditor({ quotationId, initialPhone, onUpdate }: { quotationId: string, initialPhone: string, onUpdate: (phone: string) => void }) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [phone, setPhone] = useState(initialPhone);
+    const [saving, setSaving] = useState(false);
+    const supabase = createClient();
+
+    const handleSave = async () => {
+        if (!phone.trim()) {
+            toast.error('El teléfono no puede estar vacío');
+            return;
+        }
+
+        try {
+            setSaving(true);
+            const { error } = await supabase
+                .from('quotations')
+                .update({ customer_phone: phone })
+                .eq('id', quotationId);
+
+            if (error) throw error;
+
+            toast.success('Teléfono actualizado');
+            onUpdate(phone);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating phone:', error);
+            toast.error('Error al actualizar el teléfono');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setPhone(initialPhone);
+        setIsEditing(false);
+    };
+
+    if (isEditing) {
+        return (
+            <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                        placeholder="573123456789"
+                        disabled={saving}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <Button
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="flex-1 bg-green-600 hover:bg-green-700"
+                    >
+                        {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Guardar'}
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleCancel}
+                        disabled={saving}
+                        className="flex-1"
+                    >
+                        Cancelar
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex items-center justify-between gap-2 group">
+            <div className="flex items-center gap-2 flex-1">
+                <Phone className="h-4 w-4 text-gray-400" />
+                <p className="text-gray-900">{phone}</p>
+            </div>
+            <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setIsEditing(true)}
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+                <FileEdit className="h-3 w-3" />
+            </Button>
+        </div>
+    );
+}
 
 export default function AdminQuotationDetailPage() {
     const params = useParams();
@@ -169,7 +262,7 @@ export default function AdminQuotationDetailPage() {
                         )}
 
                         <a
-                            href={`https://wa.me/${quotation.customer_phone}?text=Hola ${quotation.customer_name}, te escribo sobre tu cotización ${quotation.ticket}`}
+                            href={`https://wa.me/${formatPhoneForWhatsApp(quotation.customer_phone)}?text=${encodeURIComponent(`Hola ${quotation.customer_name}, te escribo sobre tu cotización ${quotation.ticket}`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full sm:w-auto"
@@ -407,10 +500,13 @@ export default function AdminQuotationDetailPage() {
                             </div>
                             <div>
                                 <label className="text-xs text-gray-500 uppercase font-semibold">Teléfono</label>
-                                <div className="flex items-center gap-2">
-                                    <Phone className="h-4 w-4 text-gray-400" />
-                                    <p className="text-gray-900">{quotation.customer_phone}</p>
-                                </div>
+                                <PhoneEditor
+                                    quotationId={quotation.id}
+                                    initialPhone={quotation.customer_phone}
+                                    onUpdate={(newPhone) => {
+                                        setQuotation({ ...quotation, customer_phone: newPhone })
+                                    }}
+                                />
                             </div>
                             <div>
                                 <label className="text-xs text-gray-500 uppercase font-semibold">Ciudad</label>

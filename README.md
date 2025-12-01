@@ -2,6 +2,23 @@
 
 Plataforma de comercio electrónico moderna para tiendas locales en Samacá, Boyacá.
 
+## 🚀 Deploy en Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tu-usuario/samaca-store)
+
+### Variables de Entorno Requeridas
+
+Configura estas variables en Vercel:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
+NEXT_PUBLIC_WHATSAPP_NUMBER=573123106507
+NEXT_PUBLIC_BUSINESS_NAME=Samacá Store
+NEXT_PUBLIC_SITE_URL=https://tu-dominio.vercel.app
+```
+
 ## 🚀 Características
 
 - **Multi-tienda**: Soporte para múltiples tiendas en una sola plataforma

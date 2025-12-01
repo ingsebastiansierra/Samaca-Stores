@@ -161,7 +161,10 @@ export async function POST(request: NextRequest) {
       message += `Ver cotizacion completa:\n${quotationLink}\n\n`
       message += `Te gustaria proceder con esta compra?`
 
-      const whatsappUrl = `https://wa.me/${quotation.customer_phone}?text=${encodeURIComponent(message)}`
+      // Formatear el número de teléfono con código de país
+      const { formatPhoneForWhatsApp } = await import('@/lib/utils/phone')
+      const formattedPhone = formatPhoneForWhatsApp(quotation.customer_phone)
+      const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
 
       // Actualizar estado de la cotización
       await supabase
