@@ -228,7 +228,7 @@ export async function getGlobalStats() {
   const supabase = await createClient()
 
   const [storesResult, usersResult, quotationsResult, productsResult] = await Promise.all([
-    supabase.from('stores').select('id, status, total_sales, total_orders'),
+    supabase.from('stores').select('id, name, city, status, total_sales, total_orders'),
     supabase.from('user_profiles').select('id, role'),
     supabase.from('quotations').select('id, total, status, created_at'),
     supabase.from('products').select('id, stock, status')
